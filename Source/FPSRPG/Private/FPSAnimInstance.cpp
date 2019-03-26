@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSAnimInstance.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 UFPSAnimInstance::UFPSAnimInstance()
 {
@@ -15,5 +17,12 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (::IsValid(Pawn))
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
+	}
+
+	auto Character = Cast<ACharacter>(Pawn);
+	if (Character)
+	{
+		IsInAir = Character->GetMovementComponent()->IsFalling();
+		CurrentWalkSpeed = Character->GetMovementComponent()->GetMaxSpeed();
 	}
 }

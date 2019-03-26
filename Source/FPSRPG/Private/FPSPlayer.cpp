@@ -15,29 +15,37 @@ AFPSPlayer::AFPSPlayer()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 450.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
+	bUseControllerRotationYaw = false;
 
 	// 스프링암 생성
 	TPSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("TPSpringArm"));
 	TPSpringArm->SetupAttachment(RootComponent);
 	TPSpringArm->TargetArmLength = 300.0f; 
 	TPSpringArm->bUsePawnControlRotation = true; 
+	TPSpringArm->bInheritPitch = true;
+	TPSpringArm->bInheritRoll = true;
+	TPSpringArm->bInheritYaw = true;
+	TPSpringArm->bDoCollisionTest = true;
 
 	// 카메라 생성
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(TPSpringArm, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false; 
 
-	// 애님 인스턴스 속성 지정
+	// 애니메이션 블루프린트 속성지정
 	static ConstructorHelpers::FClassFinder<UAnimInstance> FPSPlayerAnim(TEXT("AnimBlueprint'/Game/Character/FPSPlayerAnimBP.FPSPlayerAnimBP_C'")); // _C를 붙여 클래스정보를 가져옴
 	if (FPSPlayerAnim.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(FPSPlayerAnim.Class);
 	}
+
+	SprintSpeedMultiplier = 2.0f;
 }
 
 // Called when the game starts or when spawned
@@ -66,6 +74,8 @@ void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSPlayer::Sprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSPlayer::StopSprinting);
 }
 
 void AFPSPlayer::MoveForward(float Value)
@@ -94,4 +104,14 @@ void AFPSPlayer::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AFPSPlayer::Sprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+}
+
+void AFPSPlayer::StopSprinting()
+{
+	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
 }

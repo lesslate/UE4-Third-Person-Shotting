@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "FPSPlayer.generated.h"
 
@@ -13,16 +13,20 @@ class FPSRPG_API AFPSPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
+	// 스프링암
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* TPSpringArm;
 
-	/** Follow camera */
+	// 카메라
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 public:
 	// Sets default values for this character's properties
 	AFPSPlayer();
+
+	// 달리기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Movement: Walking")
+	float SprintSpeedMultiplier;
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,4 +43,6 @@ protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	void Sprint();
+	void StopSprinting();
 };
