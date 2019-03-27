@@ -3,6 +3,7 @@
 #include "FPSAnimInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "FPSPlayer.h"
 
 UFPSAnimInstance::UFPSAnimInstance()
 {
@@ -19,10 +20,13 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 	}
 
-	auto Character = Cast<ACharacter>(Pawn);
+	auto Character = Cast<AFPSPlayer>(Pawn);
 	if (Character)
 	{
 		IsInAir = Character->GetMovementComponent()->IsFalling();
 		CurrentWalkSpeed = Character->GetMovementComponent()->GetMaxSpeed();
+		WeaponState = Character->GetWeaponState();
 	}
+
+
 }

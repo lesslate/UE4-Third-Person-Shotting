@@ -38,14 +38,18 @@ AFPSPlayer::AFPSPlayer()
 	FollowCamera->SetupAttachment(TPSpringArm, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false; 
 
+
+
 	// 애니메이션 블루프린트 속성지정
 	static ConstructorHelpers::FClassFinder<UAnimInstance> FPSPlayerAnim(TEXT("AnimBlueprint'/Game/Character/FPSPlayerAnimBP.FPSPlayerAnimBP_C'")); // _C를 붙여 클래스정보를 가져옴
 	if (FPSPlayerAnim.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(FPSPlayerAnim.Class);
 	}
-
+	// 달리기 속도 배수
 	SprintSpeedMultiplier = 2.0f;
+
+	CheckWeapon = false;
 }
 
 // Called when the game starts or when spawned
@@ -114,4 +118,9 @@ void AFPSPlayer::Sprint()
 void AFPSPlayer::StopSprinting()
 {
 	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+}
+
+bool AFPSPlayer::GetWeaponState()
+{
+	return CheckWeapon;
 }

@@ -24,9 +24,10 @@ public:
 	// Sets default values for this character's properties
 	AFPSPlayer();
 
-	// 달리기
+	// 달리기 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Movement: Walking")
 	float SprintSpeedMultiplier;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,10 +40,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	bool GetWeaponState();
+
 protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
 	void Sprint();
 	void StopSprinting();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CheckWeapon;
+
+
+	
 };
