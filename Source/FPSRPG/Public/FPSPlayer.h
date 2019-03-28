@@ -41,6 +41,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	bool GetWeaponState();
+	bool GetAimingState();
 
 protected:
 	void MoveForward(float Value);
@@ -49,9 +50,16 @@ protected:
 	void Sprint();
 	void StopSprinting();
 
+	void Fire();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CheckWeapon;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int Ammo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool Aiming;
 
 	
 };

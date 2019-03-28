@@ -26,6 +26,7 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		IsInAir = Character->GetMovementComponent()->IsFalling();
 		CurrentWalkSpeed = Character->GetMovementComponent()->GetMaxSpeed();
 		WeaponState = Character->GetWeaponState();
+		Aiming = Character->GetAimingState();
 	}
 
 

@@ -50,6 +50,8 @@ AFPSPlayer::AFPSPlayer()
 	SprintSpeedMultiplier = 2.0f;
 
 	CheckWeapon = false;
+	Ammo = 0;
+	Aiming = false;
 }
 
 // Called when the game starts or when spawned
@@ -120,7 +122,16 @@ void AFPSPlayer::StopSprinting()
 	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
 }
 
+void AFPSPlayer::Fire()
+{
+}
+
 bool AFPSPlayer::GetWeaponState()
 {
 	return CheckWeapon;
+}
+
+bool AFPSPlayer::GetAimingState()
+{
+	return Aiming;
 }
