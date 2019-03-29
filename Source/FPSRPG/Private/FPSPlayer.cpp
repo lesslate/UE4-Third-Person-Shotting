@@ -8,6 +8,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "ConstructorHelpers.h"
+#include "Runtime/Core/Public/Math/Vector.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+#include "FPSAnimInstance.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -52,6 +56,25 @@ AFPSPlayer::AFPSPlayer()
 	CheckWeapon = false;
 	Ammo = 0;
 	Aiming = false;
+
+	//사운드 큐
+	static ConstructorHelpers::FObjectFinder<USoundCue>RifleShot(TEXT("SoundCue'/Game/WeaponEffects/RifleShot_Cue.RifleShot_Cue'"));
+	if (RifleShot.Succeeded())
+	{
+		ShotCue = RifleShot.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<USoundCue>MetalClick(TEXT("SoundCue'/Game/WeaponEffects/Metal-click_Cue.Metal-click_Cue'"));
+	if (MetalClick.Succeeded())
+	{
+		MetalCue = MetalClick.Object;
+	}
+
+	// 오디오 컴포넌트 추가
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerAudio"));
+	AudioComponent->bAutoActivate = false;
+	AudioComponent->SetupAttachment(RootComponent);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -68,6 +91,13 @@ void AFPSPlayer::Tick(float DeltaTime)
 
 }
 
+void AFPSPlayer::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	FPSAnim = Cast<UFPSAnimInstance>(GetMesh()->GetAnimInstance());
+	
+}
+
 // Called to bind functionality to input
 void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -82,6 +112,9 @@ void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AFPSPlayer::Sprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AFPSPlayer::StopSprinting);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSPlayer::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AFPSPlayer::StopFire);
 }
 
 void AFPSPlayer::MoveForward(float Value)
@@ -124,6 +157,49 @@ void AFPSPlayer::StopSprinting()
 
 void AFPSPlayer::Fire()
 {
+	// 총알이 없을때
+	if (Aiming == true)
+	{
+		if (Ammo == 0)
+		{
+			AudioComponent->SetSound(MetalCue);
+			AudioComponent->Play();
+		}
+		if (FPSAnim == nullptr)
+		{
+			UE_LOG(LogTemp, Log, TEXT("No FPSAnim "));
+		}
+	
+	}
+
+	// 총알이 있을때
+	if (Aiming == true)
+	{
+		if (Ammo != 0)
+		{
+			if (isFiring)
+			{
+				Ammo--;
+				AudioComponent->SetSound(ShotCue);
+				AudioComponent->Play();
+				FPSAnim->PlayFire();
+				GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Fire, .1f, false);
+				UE_LOG(LogTemp, Log, TEXT("Ammo : %d"), Ammo);
+			}
+		}
+	}
+}
+
+void AFPSPlayer::StopFire()
+{
+	isFiring = false;
+	
+}
+
+void AFPSPlayer::StartFire()
+{
+	isFiring = true;
+	Fire();
 }
 
 bool AFPSPlayer::GetWeaponState()
