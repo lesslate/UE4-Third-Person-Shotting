@@ -21,6 +21,7 @@ private:
 	// Ä«¸Þ¶ó
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+	
 
 
 public:
@@ -31,7 +32,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Movement: Walking")
 	float SprintSpeedMultiplier;
 
-	
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,6 +47,12 @@ public:
 
 	bool GetWeaponState();
 	bool GetAimingState();
+	
+	UPROPERTY()
+	class UGameplayStatics* Particle;
+
+	UPROPERTY()
+	class UParticleSystem * FireParticle;
 
 
 protected:
@@ -69,6 +75,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* WeaponMesh;
+
 	UPROPERTY(BlueprintReadOnly, Category="Audio")
 	class UAudioComponent* AudioComponent;
 	
@@ -78,6 +87,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* MetalCue;
 	
+
+
 private:
 	UPROPERTY()
 	bool isFiring;
@@ -86,6 +97,8 @@ private:
 	class UFPSAnimInstance* FPSAnim;
 
 	FTimerHandle timer;
+	
+	
 
 
 };

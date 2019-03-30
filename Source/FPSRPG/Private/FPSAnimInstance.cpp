@@ -42,7 +42,7 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UFPSAnimInstance::PlayFire()
 {
-	Montage_Play(FireMontage, 1.0f);
+	//Montage_Play(FireMontage, 1.0f);
 	IsFire = true;
 	UE_LOG(LogTemp, Log, TEXT("Fire"));
 }

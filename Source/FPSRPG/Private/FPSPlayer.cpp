@@ -12,6 +12,10 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "FPSAnimInstance.h"
+#include "DrawDebugHelpers.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
+#include "Particles/ParticleSystem.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -27,6 +31,7 @@ AFPSPlayer::AFPSPlayer()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	bUseControllerRotationYaw = false;
 
+
 	// 스프링암 생성
 	TPSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("TPSpringArm"));
 	TPSpringArm->SetupAttachment(RootComponent);
@@ -37,10 +42,15 @@ AFPSPlayer::AFPSPlayer()
 	TPSpringArm->bInheritYaw = true;
 	TPSpringArm->bDoCollisionTest = true;
 
+	
 	// 카메라 생성
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(TPSpringArm, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false; 
+
+	//무기 소켓 생성
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponHand"));
+	WeaponMesh->SetupAttachment(GetMesh(), TEXT("WeaponHand"));
 
 
 
@@ -74,7 +84,11 @@ AFPSPlayer::AFPSPlayer()
 	AudioComponent->bAutoActivate = false;
 	AudioComponent->SetupAttachment(RootComponent);
 
-
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Fire(TEXT("ParticleSystem'/Game/WeaponEffects/AssaultRifle_MF.AssaultRifle_MF'"));
+	if (Fire.Succeeded())
+	{
+		FireParticle = Fire.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -165,11 +179,6 @@ void AFPSPlayer::Fire()
 			AudioComponent->SetSound(MetalCue);
 			AudioComponent->Play();
 		}
-		if (FPSAnim == nullptr)
-		{
-			UE_LOG(LogTemp, Log, TEXT("No FPSAnim "));
-		}
-	
 	}
 
 	// 총알이 있을때
@@ -180,6 +189,26 @@ void AFPSPlayer::Fire()
 			if (isFiring)
 			{
 				Ammo--;
+				Particle->SpawnEmitterAttached(FireParticle, WeaponMesh, FName("Muzzle"));
+				FHitResult OutHit;
+				FVector Start = FollowCamera->GetComponentLocation();
+				FVector ForwardVector = FollowCamera->GetForwardVector();
+				FVector End = (Start + (ForwardVector*10000.f));
+				FCollisionQueryParams CollisionParams;
+
+				DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
+
+				bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
+
+				if (isHit)
+				{
+					if (OutHit.bBlockingHit)
+					{
+						UE_LOG(LogTemp, Log, TEXT("Ammo : %s"), *OutHit.GetActor()->GetName());
+					}
+				}
+
+
 				AudioComponent->SetSound(ShotCue);
 				AudioComponent->Play();
 				FPSAnim->PlayFire();
