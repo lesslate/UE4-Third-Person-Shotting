@@ -13,29 +13,30 @@ class FPSRPG_API AFPSPlayer : public ACharacter
 {
 	GENERATED_BODY()
 
-private:
-	// 스프링암
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* TPSpringArm;
-
-	// 카메라
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-	
-
 
 public:
 	// Sets default values for this character's properties
 	AFPSPlayer();
 
-	// 달리기 속도
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Movement: Walking")
-	float SprintSpeedMultiplier;
-
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	// 스프링암 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	class USpringArmComponent* TPSpringArm;
+
+	// 카메라 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	class UCameraComponent* FollowCamera;
+
+	// 무기 메시 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	class UStaticMeshComponent* WeaponMesh;
+
+	// 오디오 컴포넌트
+	UPROPERTY(BlueprintReadOnly, Category = "Audio")
+	class UAudioComponent* AudioComponent;
 
 public:
 	// Called every frame
@@ -48,11 +49,6 @@ public:
 	bool GetWeaponState();
 	bool GetAimingState();
 	
-	UPROPERTY()
-	class UGameplayStatics* Particle;
-
-	UPROPERTY()
-	class UParticleSystem * FireParticle;
 
 
 protected:
@@ -66,6 +62,7 @@ protected:
 	void StopFire();
 	void StartFire();
 
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CheckWeapon;
 
@@ -75,30 +72,30 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Mesh, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* WeaponMesh;
-
-	UPROPERTY(BlueprintReadOnly, Category="Audio")
-	class UAudioComponent* AudioComponent;
-	
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ShotCue;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* MetalCue;
+
+	// 달리기 속도
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking")
+	float SprintSpeedMultiplier;
 	
+	UPROPERTY()
+	class UGameplayStatics* Particle;
+
+	UPROPERTY()
+	class UParticleSystem * FireParticle;
 
 
 private:
 	UPROPERTY()
-	bool isFiring;
-
-	UPROPERTY()
 	class UFPSAnimInstance* FPSAnim;
 
+	UPROPERTY()
 	FTimerHandle timer;
-	
-	
 
+	bool isFiring;
 
 };

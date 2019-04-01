@@ -60,14 +60,15 @@ AFPSPlayer::AFPSPlayer()
 	{
 		GetMesh()->SetAnimInstanceClass(FPSPlayerAnim.Class);
 	}
+
 	// 달리기 속도 배수
 	SprintSpeedMultiplier = 2.0f;
 
 	CheckWeapon = false;
-	Ammo = 0;
 	Aiming = false;
+	Ammo = 0;
 
-	//사운드 큐
+	// 사운드 큐 저장
 	static ConstructorHelpers::FObjectFinder<USoundCue>RifleShot(TEXT("SoundCue'/Game/WeaponEffects/RifleShot_Cue.RifleShot_Cue'"));
 	if (RifleShot.Succeeded())
 	{
@@ -79,11 +80,12 @@ AFPSPlayer::AFPSPlayer()
 		MetalCue = MetalClick.Object;
 	}
 
-	// 오디오 컴포넌트 추가
+	// 오디오 컴포넌트 초기화
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerAudio"));
 	AudioComponent->bAutoActivate = false;
 	AudioComponent->SetupAttachment(RootComponent);
 
+	// Fire 파티클 초기화
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> Fire(TEXT("ParticleSystem'/Game/WeaponEffects/AssaultRifle_MF.AssaultRifle_MF'"));
 	if (Fire.Succeeded())
 	{
