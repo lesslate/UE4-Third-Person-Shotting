@@ -72,6 +72,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsSprint;
+
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ShotCue;
 
@@ -83,10 +86,16 @@ protected:
 	float SprintSpeedMultiplier;
 	
 	UPROPERTY()
-	class UGameplayStatics* Particle;
+	class UGameplayStatics* GameStatic;
 
 	UPROPERTY()
 	class UParticleSystem * FireParticle;
+
+	UPROPERTY()
+	class UParticleSystem * BloodParticle;
+
+	UPROPERTY()
+	class UParticleSystem * SmokeParticle;
 
 
 private:

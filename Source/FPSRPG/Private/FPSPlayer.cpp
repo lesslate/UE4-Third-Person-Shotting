@@ -23,7 +23,7 @@ AFPSPlayer::AFPSPlayer()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCharacterMovement()->JumpZVelocity = 450.f;
+	GetCharacterMovement()->JumpZVelocity = 350.0f;
 	GetCharacterMovement()->AirControl = 0.2f;
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
@@ -66,6 +66,7 @@ AFPSPlayer::AFPSPlayer()
 
 	CheckWeapon = false;
 	Aiming = false;
+	IsSprint = false;
 	Ammo = 0;
 
 	// 사운드 큐 저장
@@ -85,11 +86,23 @@ AFPSPlayer::AFPSPlayer()
 	AudioComponent->bAutoActivate = false;
 	AudioComponent->SetupAttachment(RootComponent);
 
-	// Fire 파티클 초기화
+	// 파티클 초기화
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> Fire(TEXT("ParticleSystem'/Game/WeaponEffects/AssaultRifle_MF.AssaultRifle_MF'"));
 	if (Fire.Succeeded())
 	{
 		FireParticle = Fire.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Blood(TEXT("ParticleSystem'/Game/WeaponEffects/P_body_bullet_impact.P_body_bullet_impact'"));
+	if (Blood.Succeeded())
+	{
+		BloodParticle = Blood.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Smoke(TEXT("ParticleSystem'/Game/WeaponEffects/P_AssaultRifle_IH.P_AssaultRifle_IH'"));
+	if (Smoke.Succeeded())
+	{
+		SmokeParticle = Smoke.Object;
 	}
 }
 
@@ -163,12 +176,23 @@ void AFPSPlayer::MoveRight(float Value)
 
 void AFPSPlayer::Sprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+	if (!Aiming)
+	{
+		GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMultiplier;
+		IsSprint = true;
+	}
 }
 
 void AFPSPlayer::StopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMultiplier;
+	
+	{
+		if (!Aiming)
+		{
+			GetCharacterMovement()->MaxWalkSpeed=300.0f;
+			IsSprint = false;
+		}
+	}
 }
 
 void AFPSPlayer::Fire()
@@ -191,23 +215,37 @@ void AFPSPlayer::Fire()
 			if (isFiring)
 			{
 				Ammo--;
-				Particle->SpawnEmitterAttached(FireParticle, WeaponMesh, FName("Muzzle"));
+				GameStatic->SpawnEmitterAttached(FireParticle, WeaponMesh, FName("Muzzle")); // 총구화염
+
 				FHitResult OutHit;
 				FVector Start = FollowCamera->GetComponentLocation();
 				FVector ForwardVector = FollowCamera->GetForwardVector();
 				FVector End = (Start + (ForwardVector*10000.f));
 				FCollisionQueryParams CollisionParams;
-
+				CollisionParams.AddIgnoredActor(this);
 				DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
 
-				bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
-
+				bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Pawn, CollisionParams);
+				
 				if (isHit)
 				{
-					if (OutHit.bBlockingHit)
+					if (OutHit.GetActor())
 					{
+						DrawDebugSolidBox(GetWorld(), OutHit.ImpactPoint, FVector(10.f), FColor::Blue, true);
 						UE_LOG(LogTemp, Log, TEXT("Ammo : %s"), *OutHit.GetActor()->GetName());
+
+						AActor* HitActor = OutHit.GetActor();
+						GameStatic->ApplyPointDamage(HitActor, 50.0f, HitActor->GetActorLocation(), OutHit, nullptr, this,nullptr); // 데미지
+						if (OutHit.GetActor()->ActorHasTag("Monster"))
+						{
+							GameStatic->SpawnEmitterAtLocation(GetWorld(), BloodParticle, OutHit.ImpactPoint); //몬스터면 피 파티클 스폰
+						}
+						else
+						{
+							GameStatic->SpawnEmitterAtLocation(GetWorld(), SmokeParticle, (OutHit.ImpactPoint)+20); //아니면 연기 스폰
+						}
 					}
+					
 				}
 
 
