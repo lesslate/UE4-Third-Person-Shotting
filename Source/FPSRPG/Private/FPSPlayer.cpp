@@ -225,7 +225,7 @@ void AFPSPlayer::Fire()
 				CollisionParams.AddIgnoredActor(this);
 				DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
 
-				bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Pawn, CollisionParams);
+				bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
 				
 				if (isHit)
 				{
@@ -233,7 +233,7 @@ void AFPSPlayer::Fire()
 					{
 						DrawDebugSolidBox(GetWorld(), OutHit.ImpactPoint, FVector(10.f), FColor::Blue, true);
 						UE_LOG(LogTemp, Log, TEXT("Ammo : %s"), *OutHit.GetActor()->GetName());
-
+						UE_LOG(LogTemp, Log, TEXT("Hit Bone : %s"), *OutHit.BoneName.ToString());
 						AActor* HitActor = OutHit.GetActor();
 						GameStatic->ApplyPointDamage(HitActor, 50.0f, HitActor->GetActorLocation(), OutHit, nullptr, this,nullptr); // µ¥¹ÌÁö
 						if (OutHit.GetActor()->ActorHasTag("Monster"))
