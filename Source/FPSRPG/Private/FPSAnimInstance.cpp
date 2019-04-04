@@ -11,16 +11,20 @@ UFPSAnimInstance::UFPSAnimInstance()
 	CurrentPawnSpeed = 0.0f;
 	IsFire = false;
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ShotMontage(TEXT("AnimMontage'/Game/Character/Swat/SwatAnim/Firing_Rifle_Montage.Firing_Rifle_Montage'"));
-	if (ShotMontage.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> Reload(TEXT("AnimMontage'/Game/Character/Swat/SwatAnim/Reloading_Montage.Reloading_Montage'"));
+	if (Reload.Succeeded())
 	{
-		FireMontage = ShotMontage.Object;
+		ReloadMontage = Reload.Object;
 	}
+	
+
 }
 
 void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	
 
 	auto Pawn = TryGetPawnOwner();
 	if (::IsValid(Pawn))
@@ -45,4 +49,17 @@ void UFPSAnimInstance::PlayFire()
 	//Montage_Play(FireMontage, 1.0f);
 	IsFire = true;
 	UE_LOG(LogTemp, Log, TEXT("Fire"));
+}
+
+void UFPSAnimInstance::PlayReload()
+{
+	Montage_Play(ReloadMontage, 1.0f);
+}
+
+void UFPSAnimInstance::AnimNotify_ReloadEnd()
+{
+	FPSPlayer = Cast<AFPSPlayer>(TryGetPawnOwner());
+	UE_LOG(LogTemp, Log, TEXT("Reload"));
+	FPSPlayer->ReloadEnd();
+	
 }

@@ -49,7 +49,8 @@ public:
 	bool GetWeaponState();
 	bool GetAimingState();
 	
-
+	UFUNCTION(BlueprintCallable, Category = "Reload")
+	void ReloadEnd();
 
 protected:
 	void MoveForward(float Value);
@@ -61,6 +62,9 @@ protected:
 	void Fire();
 	void StopFire();
 	void StartFire();
+	
+	void Reload();
+
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -70,10 +74,19 @@ protected:
 	int32 Ammo;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 RemainAmmo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 Magazine;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsSprint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsReloading;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ShotCue;

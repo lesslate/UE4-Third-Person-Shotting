@@ -19,6 +19,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	void PlayFire();
+	void PlayReload();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsFire;
@@ -40,6 +41,12 @@ private:
 	float CurrentWalkSpeed;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	UAnimMontage* FireMontage;
+	UAnimMontage* ReloadMontage;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn ,Meta = (AllowPrivateAccess = true))
+	class AFPSPlayer* FPSPlayer;
+
+	UFUNCTION()
+	void AnimNotify_ReloadEnd();
+	
 };
