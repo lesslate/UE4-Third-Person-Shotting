@@ -21,9 +21,11 @@ public:
 	void PlayFire();
 	void PlayReload();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn)
 	bool IsFire;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pawn)
+	bool IsDeath;
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentPawnSpeed;
@@ -40,7 +42,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentWalkSpeed;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Montage, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* ReloadMontage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn ,Meta = (AllowPrivateAccess = true))

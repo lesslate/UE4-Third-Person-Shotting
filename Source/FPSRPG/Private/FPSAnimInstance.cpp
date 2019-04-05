@@ -16,7 +16,6 @@ UFPSAnimInstance::UFPSAnimInstance()
 	{
 		ReloadMontage = Reload.Object;
 	}
-	
 
 }
 

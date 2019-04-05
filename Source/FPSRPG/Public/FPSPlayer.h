@@ -48,11 +48,12 @@ public:
 
 	bool GetWeaponState();
 	bool GetAimingState();
-	
-	UFUNCTION(BlueprintCallable, Category = "Reload")
+
 	void ReloadEnd();
 
 protected:
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
@@ -64,7 +65,7 @@ protected:
 	void StartFire();
 	
 	void Reload();
-
+	void Death();
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -87,6 +88,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsReloading;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float PlayerHP;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float PlayerMAXHP;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ShotCue;
@@ -119,5 +126,5 @@ private:
 	FTimerHandle timer;
 
 	bool isFiring;
-
+	
 };

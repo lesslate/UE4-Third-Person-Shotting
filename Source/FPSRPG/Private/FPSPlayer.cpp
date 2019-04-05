@@ -4,12 +4,12 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/AudioComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "ConstructorHelpers.h"
 #include "Runtime/Core/Public/Math/Vector.h"
-#include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "FPSAnimInstance.h"
 #include "DrawDebugHelpers.h"
@@ -69,6 +69,10 @@ AFPSPlayer::AFPSPlayer()
 	IsSprint = false;
 	Ammo = 0;
 	Magazine = 30;
+	RemainAmmo = 0;
+	PlayerHP = 100.0f;
+	PlayerMAXHP = 100.0f;
+
 	// 사운드 큐 저장
 	static ConstructorHelpers::FObjectFinder<USoundCue>RifleShot(TEXT("SoundCue'/Game/WeaponEffects/RifleShot_Cue.RifleShot_Cue'"));
 	if (RifleShot.Succeeded())
@@ -124,7 +128,6 @@ void AFPSPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	FPSAnim = Cast<UFPSAnimInstance>(GetMesh()->GetAnimInstance());
-
 }
 
 // Called to bind functionality to input
@@ -148,14 +151,26 @@ void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AFPSPlayer::Reload);
 }
 
+float AFPSPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	if (ActualDamage > 0.f)
+	{
+		PlayerHP -= ActualDamage;
+		if (PlayerHP <= 0.f)
+		{
+			Death();
+		}
+	}
+	return ActualDamage;
+}
+
 void AFPSPlayer::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
@@ -166,10 +181,8 @@ void AFPSPlayer::MoveRight(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
-
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
@@ -187,14 +200,11 @@ void AFPSPlayer::Sprint()
 
 void AFPSPlayer::StopSprinting()
 {
-
-	{
 		if (!Aiming)
 		{
 			GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 			IsSprint = false;
 		}
-	}
 }
 
 void AFPSPlayer::Fire()
@@ -227,11 +237,12 @@ void AFPSPlayer::Fire()
 			if (OutHit.GetActor())
 			{
 				DrawDebugSolidBox(GetWorld(), OutHit.ImpactPoint, FVector(10.f), FColor::Blue, true);
-				UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *OutHit.GetActor()->GetName());
-				UE_LOG(LogTemp, Log, TEXT("Hit Bone : %s"), *OutHit.BoneName.ToString());
+				//UE_LOG(LogTemp, Log, TEXT("Hit Actor : %s"), *OutHit.GetActor()->GetName());
+				//UE_LOG(LogTemp, Log, TEXT("Hit Bone : %s"), *OutHit.BoneName.ToString());
 				AActor* HitActor = OutHit.GetActor();
-				GameStatic->ApplyPointDamage(HitActor, 50.0f, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 데미지
-				if (OutHit.GetActor()->ActorHasTag("Monster"))
+				GameStatic->ApplyPointDamage(HitActor, 50.0f, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 포인트 데미지
+
+				if (OutHit.GetActor()->ActorHasTag("Monster")) 
 				{
 					GameStatic->SpawnEmitterAtLocation(GetWorld(), BloodParticle, OutHit.ImpactPoint); //몬스터면 피 파티클 스폰
 				}
@@ -256,7 +267,6 @@ void AFPSPlayer::Fire()
 void AFPSPlayer::StopFire()
 {
 	isFiring = false;
-
 }
 
 void AFPSPlayer::StartFire()
@@ -267,12 +277,20 @@ void AFPSPlayer::StartFire()
 
 void AFPSPlayer::Reload()
 {
-	if (Aiming == false && CheckWeapon == true && IsReloading == false && Ammo != 30 && RemainAmmo != 0)
+	if (Aiming == false && CheckWeapon == true && IsReloading == false && Ammo != Magazine && RemainAmmo != 0)
 	{
 		/*UE_LOG(LogTemp, Log, TEXT("Reload"));*/
 		FPSAnim->PlayReload();
 		IsReloading = true;
 	}
+}
+
+void AFPSPlayer::Death()
+{
+	FPSAnim->IsDeath = true;
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AFPSPlayer::ReloadEnd()
@@ -288,11 +306,9 @@ void AFPSPlayer::ReloadEnd()
 		RemainAmmo = RemainAmmo - (Magazine - Ammo);
 		Ammo = (Magazine - Ammo) + Ammo;
 	}
-	UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
+	//UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
 	IsReloading = false;
 }
-
-
 
 bool AFPSPlayer::GetWeaponState()
 {
