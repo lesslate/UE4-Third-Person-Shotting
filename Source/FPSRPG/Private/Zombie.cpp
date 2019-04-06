@@ -6,6 +6,7 @@
 #include "Components/AudioComponent.h"
 #include "ConstructorHelpers.h"
 #include "ZombieAnimInstance.h"
+#include "ZombieAIController.h"
 
 // Sets default values
 AZombie::AZombie()
@@ -13,12 +14,9 @@ AZombie::AZombie()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// 오디오 컴포넌트 초기화
-	ZombieAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerAudio"));
-	ZombieAudioComponent->bAutoActivate = false;
-	ZombieAudioComponent->SetupAttachment(GetMesh());
+	AIControllerClass = AZombieAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	
 	// 스켈레탈 메시 설정
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/zombie/jill.jill'"));
 	if (ZBMESH.Succeeded())
@@ -31,6 +29,8 @@ AZombie::AZombie()
 	{
 		GetMesh()->SetAnimInstanceClass(ZombieAnimBP.Class);
 	}
+
+	IsAttacking = false;
 }
 
 // Called when the game starts or when spawned
@@ -51,7 +51,10 @@ void AZombie::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	ZombieAnim = Cast<UZombieAnimInstance>(GetMesh()->GetAnimInstance());
-
+	if (nullptr != ZombieAnim)
+	{
+		ZombieAnim->OnMontageEnded.AddDynamic(this, &AZombie::OnAttackMontageEnded);
+	}
 }
 
 
@@ -60,5 +63,22 @@ void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AZombie::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
+{
+	IsAttacking = false;
+
+	OnAttackEnd.Broadcast();
+}
+
+void AZombie::Attack()
+{
+	if (!IsAttacking)
+	{
+		UE_LOG(LogTemp, Log, TEXT("zombie attack!"));
+		ZombieAnim->PlayAttackMontage();
+		IsAttacking = true;
+	}
 }
 

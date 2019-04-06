@@ -15,6 +15,12 @@ class FPSRPG_API UZombieAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 	
 	
+public:
+	UZombieAnimInstance();
+
+	void PlayAttackMontage();
 	
-	
+private:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* AttackMontage;
 };
