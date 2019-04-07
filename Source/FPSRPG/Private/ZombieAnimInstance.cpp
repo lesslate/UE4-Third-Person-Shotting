@@ -17,3 +17,10 @@ void UZombieAnimInstance::PlayAttackMontage()
 {
 	Montage_Play(AttackMontage, 1.0f);
 }
+
+void UZombieAnimInstance::AnimNotify_AttackHitCheck()
+{
+	OnAttackHitCheck.Broadcast();
+}
+
+

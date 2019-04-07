@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "ZombieAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
+
 /**
  * 
  */
@@ -17,10 +19,14 @@ class FPSRPG_API UZombieAnimInstance : public UAnimInstance
 	
 public:
 	UZombieAnimInstance();
-
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	void PlayAttackMontage();
 	
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
+
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck();
 };
+

@@ -7,6 +7,7 @@
 #include "ConstructorHelpers.h"
 #include "ZombieAnimInstance.h"
 #include "ZombieAIController.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AZombie::AZombie()
@@ -55,6 +56,8 @@ void AZombie::PostInitializeComponents()
 	{
 		ZombieAnim->OnMontageEnded.AddDynamic(this, &AZombie::OnAttackMontageEnded);
 	}
+
+	ZombieAnim->OnAttackHitCheck.AddUObject(this, &AZombie::AttackCheck);
 }
 
 
@@ -62,6 +65,53 @@ void AZombie::PostInitializeComponents()
 void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+void AZombie::AttackCheck()
+{
+	UE_LOG(LogTemp, Log, TEXT("zombie Check!"));
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 50.0f,
+		FQuat::Identity,
+		ECollisionChannel::ECC_EngineTraceChannel5,
+		FCollisionShape::MakeSphere(50.0f),
+		Params);
+
+
+	FVector TraceVec = GetActorForwardVector() * 200;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = 50 * 0.5f + 50;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+#if ENABLE_DRAW_DEBUG
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		50,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+
+#endif
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
+			
+				
+		}
+	}
 
 }
 

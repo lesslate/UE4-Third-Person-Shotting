@@ -32,6 +32,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	void AttackCheck();
+
 	UPROPERTY()
 	class UZombieAnimInstance* ZombieAnim;
 
