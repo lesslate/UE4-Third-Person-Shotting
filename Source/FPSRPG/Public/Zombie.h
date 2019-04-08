@@ -18,6 +18,12 @@ public:
 	AZombie();
 
 	void Attack();
+	void Run();
+	void Walk();
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool IsRun;
+
 	FOnAttackEndDelegate OnAttackEnd;
 protected:
 	// Called when the game starts or when spawned

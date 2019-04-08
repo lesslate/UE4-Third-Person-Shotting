@@ -12,12 +12,13 @@ const FName AZombieAIController::TargetKey(TEXT("Target"));
 
 AZombieAIController::AZombieAIController()
 {
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBObject(TEXT("BlackboardData'/Game/AI/BB_Zombie.BB_Zombie'"));
+	// BlackBoard 초기화
+	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBObject(TEXT("BlackboardData'/Game/AI/BB_Zombie.BB_Zombie'")); 
 	if (BBObject.Succeeded())
 	{
 		BBZombie = BBObject.Object;
 	}
-
+	// BehaviorTree 초기화
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTObject(TEXT("BehaviorTree'/Game/AI/BT_Zombie.BT_Zombie'"));
 	if (BTObject.Succeeded())
 	{
@@ -33,7 +34,7 @@ void AZombieAIController::Possess(APawn * InPawn)
 		Blackboard->SetValueAsVector(HomePosKey, InPawn->GetActorLocation());
 		if (!RunBehaviorTree(BTZombie))
 		{
-			UE_LOG(LogTemp, Log, TEXT("AIController couldn't run BT"));
+			UE_LOG(LogTemp, Log, TEXT("BT NOT FOUND"));
 		}
 	}
 }

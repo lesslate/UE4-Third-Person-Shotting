@@ -18,6 +18,12 @@ AZombie::AZombie()
 	AIControllerClass = AZombieAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
+	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
+
 	// ½ºÄÌ·¹Å» ¸Þ½Ã ¼³Á¤
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/zombie/jill.jill'"));
 	if (ZBMESH.Succeeded())
@@ -117,9 +123,12 @@ void AZombie::AttackCheck()
 
 void AZombie::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
 {
-	IsAttacking = false;
+	if (IsAttacking)
+	{
+		IsAttacking = false;
 
-	OnAttackEnd.Broadcast();
+		OnAttackEnd.Broadcast();
+	}
 }
 
 void AZombie::Attack()
@@ -130,5 +139,17 @@ void AZombie::Attack()
 		ZombieAnim->PlayAttackMontage();
 		IsAttacking = true;
 	}
+}
+
+void AZombie::Run()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	IsRun = true;
+}
+
+void AZombie::Walk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
+	IsRun = false;
 }
 
