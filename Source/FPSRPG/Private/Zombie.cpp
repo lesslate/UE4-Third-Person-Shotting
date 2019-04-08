@@ -76,7 +76,6 @@ void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AZombie::AttackCheck()
 {
-	UE_LOG(LogTemp, Log, TEXT("zombie Check!"));
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->SweepSingleByChannel(
@@ -111,10 +110,8 @@ void AZombie::AttackCheck()
 	{
 		if (HitResult.Actor.IsValid())
 		{
-			
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
-			
 				
 		}
 	}
@@ -126,8 +123,8 @@ void AZombie::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
 	if (IsAttacking)
 	{
 		IsAttacking = false;
-
 		OnAttackEnd.Broadcast();
+		UE_LOG(LogTemp, Log, TEXT("Montage End!"));
 	}
 }
 
@@ -135,7 +132,7 @@ void AZombie::Attack()
 {
 	if (!IsAttacking)
 	{
-		UE_LOG(LogTemp, Log, TEXT("zombie attack!"));
+		//UE_LOG(LogTemp, Log, TEXT("zombie attack!"));
 		ZombieAnim->PlayAttackMontage();
 		IsAttacking = true;
 	}

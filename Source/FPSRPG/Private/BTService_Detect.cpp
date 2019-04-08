@@ -34,7 +34,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 		OverlapResults,
 		Center,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
+		ECollisionChannel::ECC_GameTraceChannel5,
 		FCollisionShape::MakeSphere(DetectRadius),
 		CollisionQueryParam
 	);
@@ -54,13 +54,12 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				DrawDebugLine(World, ControllingPawn->GetActorLocation(), FPSPlayer->GetActorLocation(), FColor::Blue, false, 0.27f);
 				return;
 			}
-			else
-			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, nullptr);
-				Zombie->Walk();
-			}
-
 		}
+	}
+	else
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, nullptr);
+		Zombie->Walk();
 	}
 
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);

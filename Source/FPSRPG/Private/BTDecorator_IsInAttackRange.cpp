@@ -23,7 +23,8 @@ bool UBTDecorator_IsInAttackRange::CalculateRawConditionValue(UBehaviorTreeCompo
 	if (nullptr == Target)
 		return false;
 
-	bResult = (Target->GetDistanceTo(ControllingPawn) <= 100.0f); 
+	bResult = (Target->GetDistanceTo(ControllingPawn) <= 120.0f); 
+	UE_LOG(LogTemp, Log, TEXT("can Attack: %s"),bResult ? TEXT("true") : TEXT("false"));
 	return bResult;
 }
 

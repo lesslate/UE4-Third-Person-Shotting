@@ -18,22 +18,27 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (nullptr == Zombie)
 		return EBTNodeResult::Failed;
 
+	
 	Zombie->Attack();
 	IsAttacking = true;
-	Zombie->Walk();
+
+	UE_LOG(LogTemp, Log, TEXT("ZombieAttack"));
+	//Zombie->Walk();
+	
 	Zombie->OnAttackEnd.AddLambda([this]() -> void {
 		IsAttacking = false;
 	});
-
 	return EBTNodeResult::InProgress;
+
+	
 }
 
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
 	if (!IsAttacking)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		UE_LOG(LogTemp, Log, TEXT("AttackEnd"));
 	}
 }
