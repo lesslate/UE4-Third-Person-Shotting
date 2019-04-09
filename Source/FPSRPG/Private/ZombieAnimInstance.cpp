@@ -11,6 +11,12 @@ UZombieAnimInstance::UZombieAnimInstance()
 	{
 		AttackMontage = ATTACK_MONTAGE.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT("AnimMontage'/Game/zombie/Zombie_Dying_mixamo_com_Montage.Zombie_Dying_mixamo_com_Montage'"));
+	if (DEATH_MONTAGE.Succeeded())
+	{
+		DeathMontage = DEATH_MONTAGE.Object;
+	}
 }
 
 void UZombieAnimInstance::PlayAttackMontage()
@@ -18,9 +24,15 @@ void UZombieAnimInstance::PlayAttackMontage()
 	Montage_Play(AttackMontage, 1.0f);
 }
 
+void UZombieAnimInstance::PlayDeathMontage()
+{
+	Montage_Play(DeathMontage, 1.0f);
+}
+
 void UZombieAnimInstance::AnimNotify_AttackHitCheck()
 {
 	OnAttackHitCheck.Broadcast();
 }
+
 
 

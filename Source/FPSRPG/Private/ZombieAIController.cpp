@@ -38,3 +38,12 @@ void AZombieAIController::Possess(APawn * InPawn)
 		}
 	}
 }
+
+void AZombieAIController::StopAI()
+{
+	auto BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+	if (nullptr != BehaviorTreeComponent)
+	{
+		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);
+	}
+}

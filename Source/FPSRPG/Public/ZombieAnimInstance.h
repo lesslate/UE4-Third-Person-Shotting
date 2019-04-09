@@ -21,10 +21,14 @@ public:
 	UZombieAnimInstance();
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	void PlayAttackMontage();
+	void PlayDeathMontage();
 	
 private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DeathMontage;
 
 	UFUNCTION()
 	void AnimNotify_AttackHitCheck();

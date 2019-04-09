@@ -20,6 +20,8 @@ public:
 	AZombieAIController();
 	virtual void Possess(APawn* InPawn) override;
 
+	void StopAI();
+
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;

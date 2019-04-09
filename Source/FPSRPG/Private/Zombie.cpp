@@ -8,12 +8,16 @@
 #include "ZombieAnimInstance.h"
 #include "ZombieAIController.h"
 #include "DrawDebugHelpers.h"
+#include "FPSPlayer.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AZombie::AZombie()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	HP = 120.0f;
 
 	AIControllerClass = AZombieAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -30,6 +34,7 @@ AZombie::AZombie()
 	{
 		GetMesh()->SetSkeletalMesh(ZBMESH.Object);
 	}
+
 	// 애니메이션 블루프린트 속성지정
 	static ConstructorHelpers::FClassFinder<UAnimInstance> ZombieAnimBP(TEXT("AnimBlueprint'/Game/Character/AnimBP_zombie.AnimBP_zombie_C'")); // _C를 붙여 클래스정보를 가져옴
 	if (ZombieAnimBP.Succeeded())
@@ -37,21 +42,34 @@ AZombie::AZombie()
 		GetMesh()->SetAnimInstanceClass(ZombieAnimBP.Class);
 	}
 
+	// 사운드 큐 저장
+	static ConstructorHelpers::FObjectFinder<USoundCue>ZOMBIE_SOUND(TEXT("SoundCue'/Game/zombie/189281__huminaatio__zombie-breathing_Cue.189281__huminaatio__zombie-breathing_Cue'"));
+	if (ZOMBIE_SOUND.Succeeded())
+	{
+		ZombieSound = ZOMBIE_SOUND.Object;
+	}
+	// 오디오 컴포넌트 초기화
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("ZombieAudio"));
+	AudioComponent->bAutoActivate = false;
+	AudioComponent->SetupAttachment(GetMesh());
+	
+
 	IsAttacking = false;
+	IsDeath = false;
 }
 
 // Called when the game starts or when spawned
 void AZombie::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AudioComponent->SetSound(ZombieSound);
+	AudioComponent->Play();
 }
 
 // Called every frame
 void AZombie::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AZombie::PostInitializeComponents()
@@ -62,16 +80,17 @@ void AZombie::PostInitializeComponents()
 	{
 		ZombieAnim->OnMontageEnded.AddDynamic(this, &AZombie::OnAttackMontageEnded);
 	}
+	ZombieAI = Cast<AZombieAIController>(GetController());
 
+
+	//공격 판정 체크
 	ZombieAnim->OnAttackHitCheck.AddUObject(this, &AZombie::AttackCheck);
 }
-
 
 // Called to bind functionality to input
 void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AZombie::AttackCheck()
@@ -108,11 +127,10 @@ void AZombie::AttackCheck()
 #endif
 	if (bResult)
 	{
-		if (HitResult.Actor.IsValid())
+		if (HitResult.GetActor()->ActorHasTag("Player"))
 		{
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
-				
 		}
 	}
 
@@ -124,7 +142,7 @@ void AZombie::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
 	{
 		IsAttacking = false;
 		OnAttackEnd.Broadcast();
-		UE_LOG(LogTemp, Log, TEXT("Montage End!"));
+		//UE_LOG(LogTemp, Log, TEXT("Montage End!"));
 	}
 }
 
@@ -148,5 +166,34 @@ void AZombie::Walk()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 	IsRun = false;
+}
+
+void AZombie::ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo)
+{
+	UE_LOG(LogTemp, Log, TEXT("ReceiveDamage"));
+	if (BoneName == TEXT("Head"))
+	{
+		IsDeath = true;
+		Death();
+	}
+	else
+	{
+		HP -= Damage;
+		if (HP <= 0)
+		{
+			Death();
+		}
+	}
+}
+
+void AZombie::Death()
+{
+	ZombieAI->StopAI();
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ZombieAnim->PlayDeathMontage();
+	AudioComponent->Stop();
+
 }
 

@@ -20,14 +20,25 @@ public:
 	void Attack();
 	void Run();
 	void Walk();
+	void Death();
 
+	UFUNCTION()
+	void ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo);
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool IsRun;
+
 
 	FOnAttackEndDelegate OnAttackEnd;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category = "Audio")
+	class UAudioComponent* AudioComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Audio")
+	class USoundCue* ZombieSound;
 
 public:	
 	// Called every frame
@@ -43,8 +54,17 @@ private:
 	UPROPERTY()
 	class UZombieAnimInstance* ZombieAnim;
 
+	UPROPERTY()
+	class AZombieAIController* ZombieAI;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool IsAttacking;
+
+	UPROPERTY(VisibleAnywhere)
+	float HP;
+
+	UPROPERTY(VisibleAnywhere)
+	bool IsDeath;
 
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
