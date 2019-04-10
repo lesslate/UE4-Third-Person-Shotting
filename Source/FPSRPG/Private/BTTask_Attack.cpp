@@ -22,8 +22,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	Zombie->Attack();
 	IsAttacking = true;
 
-	UE_LOG(LogTemp, Log, TEXT("ZombieAttack"));
-	//Zombie->Walk();
+	//UE_LOG(LogTemp, Log, TEXT("ZombieAttack"));
+	
 	
 	Zombie->OnAttackEnd.AddLambda([this]() -> void {
 		IsAttacking = false;
@@ -39,6 +39,6 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	if (!IsAttacking)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		UE_LOG(LogTemp, Log, TEXT("AttackEnd"));
+		//UE_LOG(LogTemp, Log, TEXT("AttackEnd"));
 	}
 }

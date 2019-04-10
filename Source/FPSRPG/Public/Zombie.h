@@ -55,6 +55,9 @@ private:
 	class UZombieAnimInstance* ZombieAnim;
 
 	UPROPERTY()
+	class AActor* BPZombie;
+
+	UPROPERTY()
 	class AZombieAIController* ZombieAI;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))

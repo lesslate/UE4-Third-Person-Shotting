@@ -28,6 +28,12 @@ AZombie::AZombie()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 
+	//static ConstructorHelpers::FObjectFinder<AActor> BPZOMBIE(TEXT("Blueprint'/Game/Character/BPZombie.BPZombie'"));
+	//if (BPZOMBIE.Succeeded())
+	//{
+	//	BPZombie = BPZOMBIE.Object;
+	//}
+
 	// 스켈레탈 메시 설정
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/zombie/jill.jill'"));
 	if (ZBMESH.Succeeded())
@@ -95,14 +101,17 @@ void AZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AZombie::AttackCheck()
 {
+	//TArray<FHitResult> HitResult;
 	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 	bool bResult = GetWorld()->SweepSingleByChannel(
 		HitResult,
 		GetActorLocation(),
 		GetActorLocation() + GetActorForwardVector() * 50.0f,
 		FQuat::Identity,
-		ECollisionChannel::ECC_EngineTraceChannel5,
+		ECollisionChannel::ECC_GameTraceChannel5, 
 		FCollisionShape::MakeSphere(50.0f),
 		Params);
 
@@ -125,14 +134,19 @@ void AZombie::AttackCheck()
 		DebugLifeTime);
 
 #endif
+
 	if (bResult)
 	{
-		if (HitResult.GetActor()->ActorHasTag("Player"))
-		{
-			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
-		}
+		//UE_LOG(LogTemp, Log, TEXT("Zombie Hit: %s"), *HitResult.GetActor()->GetName());
+			if (HitResult.GetActor()->ActorHasTag("Player"))
+			{	
+				FDamageEvent DamageEvent;
+				// 데미지전달
+				HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
+
+			}
 	}
+	
 
 }
 
@@ -170,7 +184,7 @@ void AZombie::Walk()
 
 void AZombie::ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo)
 {
-	UE_LOG(LogTemp, Log, TEXT("ReceiveDamage"));
+	//UE_LOG(LogTemp, Log, TEXT("ReceiveDamage"));
 	if (BoneName == TEXT("Head"))
 	{
 		IsDeath = true;
