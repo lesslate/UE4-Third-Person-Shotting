@@ -28,6 +28,8 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool IsRun;
 
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* DamageUI;
 
 	FOnAttackEndDelegate OnAttackEnd;
 protected:

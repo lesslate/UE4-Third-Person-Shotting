@@ -10,6 +10,7 @@
 #include "DrawDebugHelpers.h"
 #include "FPSPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AZombie::AZombie()
@@ -17,7 +18,7 @@ AZombie::AZombie()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	HP = 120.0f;
+	HP = 600.0f;
 
 	AIControllerClass = AZombieAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -28,10 +29,15 @@ AZombie::AZombie()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 
-	//static ConstructorHelpers::FObjectFinder<AActor> BPZOMBIE(TEXT("Blueprint'/Game/Character/BPZombie.BPZombie'"));
-	//if (BPZOMBIE.Succeeded())
+	//DamageUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("DAMAGEUI"));
+	//DamageUI->SetupAttachment(GetMesh());
+	//DamageUI->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	//DamageUI->SetWidgetSpace(EWidgetSpace::Screen);
+	//static ConstructorHelpers::FClassFinder<UUserWidget> DAMAGEHUD(TEXT("WidgetBlueprint'/Game/UI/BP_DamageHUD.BP_DamageHUD_C'"));
+	//if (DAMAGEHUD.Succeeded())
 	//{
-	//	BPZombie = BPZOMBIE.Object;
+	//	DamageUI->SetWidgetClass(DAMAGEHUD.Class);
+	//	DamageUI->SetDrawSize(FVector2D(150.0f, 50.0f));
 	//}
 
 	// 스켈레탈 메시 설정
@@ -142,7 +148,7 @@ void AZombie::AttackCheck()
 			{	
 				FDamageEvent DamageEvent;
 				// 데미지전달
-				HitResult.Actor->TakeDamage(20, DamageEvent, GetController(), this);
+				HitResult.Actor->TakeDamage(1, DamageEvent, GetController(), this);
 
 			}
 	}
