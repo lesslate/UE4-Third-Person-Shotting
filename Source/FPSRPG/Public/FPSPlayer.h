@@ -50,6 +50,9 @@ public:
 	bool GetAimingState();
 
 	void ReloadEnd();
+	void Aggro();
+
+	
 
 protected:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -72,15 +75,6 @@ protected:
 	bool CheckWeapon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int32 Ammo;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int32 RemainAmmo;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int32 Magazine;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -89,11 +83,26 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsReloading;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 Ammo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 RemainAmmo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 Magazine;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
 	float PlayerHP;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
 	float PlayerMAXHP;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	float Damage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	float ActualDamage;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ShotCue;
@@ -121,6 +130,9 @@ protected:
 private:
 	UPROPERTY()
 	class UFPSAnimInstance* FPSAnim;
+
+	UPROPERTY()
+	class AZombie * Zombie;
 
 	UPROPERTY()
 	FTimerHandle timer;

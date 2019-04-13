@@ -11,7 +11,7 @@ UBTService_Detect::UBTService_Detect()
 {
 	NodeName = TEXT("Detect");
 	Interval = 1.0f;
-	
+
 }
 
 void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
@@ -23,7 +23,9 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 1000.0f;
+
+	auto ZombieAI = Cast<AZombieAIController>(OwnerComp.GetAIOwner());
+	DetectRadius = ZombieAI->Radius;
 
 	auto Zombie = Cast<AZombie>(OwnerComp.GetAIOwner()->GetPawn());
 

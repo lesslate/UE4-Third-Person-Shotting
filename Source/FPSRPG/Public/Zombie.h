@@ -25,11 +25,11 @@ public:
 	UFUNCTION()
 	void ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo);
 	
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsRun;
 
-	UPROPERTY(VisibleAnywhere, Category = UI)
-	class UWidgetComponent* DamageUI;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsHead;
 
 	FOnAttackEndDelegate OnAttackEnd;
 protected:

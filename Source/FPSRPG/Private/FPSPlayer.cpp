@@ -16,6 +16,11 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Particles/ParticleSystem.h"
+#include "Math/UnrealMathUtility.h"
+#include "BTService_Detect.h"
+#include "Zombie.h"
+#include "BTService_Detect.h"
+#include "ZombieAIController.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -72,6 +77,8 @@ AFPSPlayer::AFPSPlayer()
 	RemainAmmo = 0;
 	PlayerHP = 100.0f;
 	PlayerMAXHP = 100.0f;
+	Damage = 5000.0f;
+	
 
 	// 사운드 큐 저장
 	static ConstructorHelpers::FObjectFinder<USoundCue>RifleShot(TEXT("SoundCue'/Game/WeaponEffects/RifleShot_Cue.RifleShot_Cue'"));
@@ -221,7 +228,7 @@ void AFPSPlayer::Fire()
 	{
 		Ammo--;
 		GameStatic->SpawnEmitterAttached(FireParticle, WeaponMesh, FName("Muzzle")); // 총구화염
-
+		Aggro();
 		FHitResult OutHit;
 		FVector Start = FollowCamera->GetComponentLocation();
 		FVector ForwardVector = FollowCamera->GetForwardVector();
@@ -244,12 +251,23 @@ void AFPSPlayer::Fire()
 
 				if (OutHit.GetActor()->ActorHasTag("Monster")) 
 				{
-					GameStatic->SpawnEmitterAtLocation(GetWorld(), BloodParticle, OutHit.ImpactPoint); //몬스터면 피 파티클 스폰
-					GameStatic->ApplyPointDamage(HitActor, 50.0f, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 포인트 데미지
+					if (OutHit.BoneName == TEXT("Head"))
+					{
+						float HeadDamage = Damage * 2;
+						ActualDamage = FMath::RandRange((HeadDamage - (HeadDamage / 100) * 20), HeadDamage + (HeadDamage / 100) * 20);
+						GameStatic->SpawnEmitterAtLocation(GetWorld(), BloodParticle, OutHit.ImpactPoint); // 몬스터면 피 파티클 스폰
+						GameStatic->ApplyPointDamage(HitActor, ActualDamage, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 포인트 데미지
+					}
+					else
+					{
+						ActualDamage = FMath::RandRange((Damage - (Damage / 100) * 20), Damage + (Damage / 100) * 20);
+						GameStatic->SpawnEmitterAtLocation(GetWorld(), BloodParticle, OutHit.ImpactPoint); // 몬스터면 피 파티클 스폰
+						GameStatic->ApplyPointDamage(HitActor, ActualDamage, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 포인트 데미지
+					}
 				}
 				else
 				{
-					GameStatic->SpawnEmitterAtLocation(GetWorld(), SmokeParticle, (OutHit.ImpactPoint) + (OutHit.ImpactNormal * 20)); //아니면 연기 스폰
+					GameStatic->SpawnEmitterAtLocation(GetWorld(), SmokeParticle, (OutHit.ImpactPoint) + (OutHit.ImpactNormal * 20)); // 몬스터가 아니면 연기 스폰
 				}
 			}
 
@@ -309,6 +327,45 @@ void AFPSPlayer::ReloadEnd()
 	}
 	//UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
 	IsReloading = false;
+}
+
+void AFPSPlayer::Aggro()
+{
+	float Radius = 3000.0f;
+	
+	
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionQueryParam;
+	bool bResult = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		GetActorLocation(),
+		FQuat::Identity,
+		ECollisionChannel::ECC_Visibility,
+		FCollisionShape::MakeSphere(Radius),
+		CollisionQueryParam
+	);
+
+	if (bResult)
+	{
+		for (auto OverlapResult : OverlapResults)
+		{
+		
+			if (OverlapResult.GetActor()->ActorHasTag("Monster"))
+			{
+				
+				auto Zombie = Cast<AZombie>(OverlapResult.GetActor());
+				auto ZombieAI = Cast<AZombieAIController>(Zombie->GetController());
+				ZombieAI->Radius = 3000.0f;
+				DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Green, false, 0.2f);
+			}
+		}
+	}
+	
+	
+		DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Red, false, 0.2f);
+	
+
+	
 }
 
 bool AFPSPlayer::GetWeaponState()

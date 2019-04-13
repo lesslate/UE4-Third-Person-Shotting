@@ -17,6 +17,9 @@ class FPSRPG_API UBTService_Detect : public UBTService
 public:
 	UBTService_Detect();
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	float DetectRadius;
+
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	

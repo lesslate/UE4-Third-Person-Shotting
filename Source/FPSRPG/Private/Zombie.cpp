@@ -18,7 +18,7 @@ AZombie::AZombie()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	HP = 600.0f;
+	HP = 50000.0f;
 
 	AIControllerClass = AZombieAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -28,17 +28,6 @@ AZombie::AZombie()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
-
-	//DamageUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("DAMAGEUI"));
-	//DamageUI->SetupAttachment(GetMesh());
-	//DamageUI->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
-	//DamageUI->SetWidgetSpace(EWidgetSpace::Screen);
-	//static ConstructorHelpers::FClassFinder<UUserWidget> DAMAGEHUD(TEXT("WidgetBlueprint'/Game/UI/BP_DamageHUD.BP_DamageHUD_C'"));
-	//if (DAMAGEHUD.Succeeded())
-	//{
-	//	DamageUI->SetWidgetClass(DAMAGEHUD.Class);
-	//	DamageUI->SetDrawSize(FVector2D(150.0f, 50.0f));
-	//}
 
 	// 스켈레탈 메시 설정
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/zombie/jill.jill'"));
@@ -68,6 +57,7 @@ AZombie::AZombie()
 
 	IsAttacking = false;
 	IsDeath = false;
+	IsHead = false;
 }
 
 // Called when the game starts or when spawned
@@ -148,7 +138,7 @@ void AZombie::AttackCheck()
 			{	
 				FDamageEvent DamageEvent;
 				// 데미지전달
-				HitResult.Actor->TakeDamage(1, DamageEvent, GetController(), this);
+				HitResult.Actor->TakeDamage(10, DamageEvent, GetController(), this);
 
 			}
 	}
@@ -190,19 +180,15 @@ void AZombie::Walk()
 
 void AZombie::ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo)
 {
-	//UE_LOG(LogTemp, Log, TEXT("ReceiveDamage"));
 	if (BoneName == TEXT("Head"))
+	{
+		IsHead = true;
+	}
+	HP -= Damage;
+	if (HP <= 0)
 	{
 		IsDeath = true;
 		Death();
-	}
-	else
-	{
-		HP -= Damage;
-		if (HP <= 0)
-		{
-			Death();
-		}
 	}
 }
 
