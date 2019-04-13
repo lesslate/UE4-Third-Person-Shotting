@@ -24,6 +24,7 @@ AZombieAIController::AZombieAIController()
 	{
 		BTZombie = BTObject.Object;
 	}
+	Radius = 1000;
 }
 
 void AZombieAIController::Possess(APawn * InPawn)
