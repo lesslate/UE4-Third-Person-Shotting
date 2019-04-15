@@ -66,6 +66,10 @@ void AZombie::BeginPlay()
 	Super::BeginPlay();
 	AudioComponent->SetSound(ZombieSound);
 	AudioComponent->Play();
+	//´Þ¸®±â
+	ZombieAI->OnSprint.AddUObject(this, &AZombie::Run);
+	//°È±â
+	ZombieAI->OnStopSprint.AddUObject(this, &AZombie::Walk);
 }
 
 // Called every frame

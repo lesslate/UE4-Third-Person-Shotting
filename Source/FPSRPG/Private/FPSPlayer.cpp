@@ -331,7 +331,7 @@ void AFPSPlayer::ReloadEnd()
 
 void AFPSPlayer::Aggro()
 {
-	float Radius = 3000.0f;
+	float Radius = 5000.0f;
 	
 	
 	TArray<FOverlapResult> OverlapResults;
@@ -349,23 +349,16 @@ void AFPSPlayer::Aggro()
 	{
 		for (auto OverlapResult : OverlapResults)
 		{
-		
 			if (OverlapResult.GetActor()->ActorHasTag("Monster"))
 			{
-				
 				auto Zombie = Cast<AZombie>(OverlapResult.GetActor());
 				auto ZombieAI = Cast<AZombieAIController>(Zombie->GetController());
-				ZombieAI->Radius = 3000.0f;
+				ZombieAI->Radius = 5000.0f; 
 				DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Green, false, 0.2f);
 			}
 		}
 	}
-	
-	
 		DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Red, false, 0.2f);
-	
-
-	
 }
 
 bool AFPSPlayer::GetWeaponState()

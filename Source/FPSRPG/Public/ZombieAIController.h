@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "ZombieAIController.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FSprintDelegate);
 /**
  * 
  */
@@ -14,14 +15,14 @@ class FPSRPG_API AZombieAIController : public AAIController
 {
 	GENERATED_BODY()
 	
-
 	
 public:
 	AZombieAIController();
 	virtual void Possess(APawn* InPawn) override;
 
 	void StopAI();
-
+	FSprintDelegate OnSprint;
+	FSprintDelegate OnStopSprint;
 	static const FName HomePosKey;
 	static const FName PatrolPosKey;
 	static const FName TargetKey;

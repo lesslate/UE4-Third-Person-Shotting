@@ -5,7 +5,8 @@
 #include "FPSPlayer.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
-#include "Zombie.h"
+
+
 
 UBTService_Detect::UBTService_Detect()
 {
@@ -27,7 +28,8 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	auto ZombieAI = Cast<AZombieAIController>(OwnerComp.GetAIOwner());
 	DetectRadius = ZombieAI->Radius;
 
-	auto Zombie = Cast<AZombie>(OwnerComp.GetAIOwner()->GetPawn());
+	//auto Zombie = Cast<AZombie>(OwnerComp.GetAIOwner()->GetPawn());
+	
 
 	if (nullptr == World) return;
 	TArray<FOverlapResult> OverlapResults;
@@ -50,10 +52,11 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, FPSPlayer); // Å¸°Ù ÀúÀå
 				
-				Zombie->Run();
-				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+				ZombieAI->OnSprint.Broadcast();
+				
+			/*	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 				DrawDebugPoint(World, FPSPlayer->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
-				DrawDebugLine(World, ControllingPawn->GetActorLocation(), FPSPlayer->GetActorLocation(), FColor::Blue, false, 0.27f);
+				DrawDebugLine(World, ControllingPawn->GetActorLocation(), FPSPlayer->GetActorLocation(), FColor::Blue, false, 0.27f);*/
 				return;
 			}
 		}
@@ -61,9 +64,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	else
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, nullptr);
-		Zombie->Walk();
+		
+		ZombieAI->OnStopSprint.Broadcast();
 	}
 
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 
 }

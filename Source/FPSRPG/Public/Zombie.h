@@ -7,6 +7,8 @@
 #include "Zombie.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate);
+DECLARE_MULTICAST_DELEGATE(FSprintDelegate);
+
 
 UCLASS()
 class FPSRPG_API AZombie : public ACharacter
@@ -32,6 +34,8 @@ public:
 	bool IsHead;
 
 	FOnAttackEndDelegate OnAttackEnd;
+	FSprintDelegate OnSprint;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -41,6 +45,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* ZombieSound;
+
+	UPROPERTY()
+	class UZombieAnimInstance* ZombieAnim;
+
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:	
 	// Called every frame
@@ -53,8 +63,6 @@ public:
 private:
 	void AttackCheck();
 
-	UPROPERTY()
-	class UZombieAnimInstance* ZombieAnim;
 
 	UPROPERTY()
 	class AActor* BPZombie;
@@ -71,8 +79,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool IsDeath;
 
-	UFUNCTION()
-	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 	
 	
 };
