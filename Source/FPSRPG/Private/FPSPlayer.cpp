@@ -19,8 +19,10 @@
 #include "Math/UnrealMathUtility.h"
 #include "BTService_Detect.h"
 #include "Zombie.h"
+#include "Zombie2.h"
 #include "BTService_Detect.h"
 #include "ZombieAIController.h"
+#include "FPSGameMode.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -331,7 +333,7 @@ void AFPSPlayer::ReloadEnd()
 
 void AFPSPlayer::Aggro()
 {
-	float Radius = 5000.0f;
+	float Radius = 3500.0f;
 	
 	
 	TArray<FOverlapResult> OverlapResults;
@@ -351,11 +353,13 @@ void AFPSPlayer::Aggro()
 		{
 			if (OverlapResult.GetActor()->ActorHasTag("Monster"))
 			{
-				auto Zombie = Cast<AZombie>(OverlapResult.GetActor());
-				auto ZombieAI = Cast<AZombieAIController>(Zombie->GetController());
-				ZombieAI->Radius = 5000.0f; 
-				DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Green, false, 0.2f);
+				AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+				if (gameMode != nullptr)
+				{
+					gameMode->OnAggro.Broadcast();
+				}
 			}
+		
 		}
 	}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Red, false, 0.2f);

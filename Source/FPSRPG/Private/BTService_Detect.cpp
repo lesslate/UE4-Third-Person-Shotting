@@ -5,6 +5,7 @@
 #include "FPSPlayer.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Zombie.h"
 
 
 
@@ -28,7 +29,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	auto ZombieAI = Cast<AZombieAIController>(OwnerComp.GetAIOwner());
 	DetectRadius = ZombieAI->Radius;
 
-	//auto Zombie = Cast<AZombie>(OwnerComp.GetAIOwner()->GetPawn());
+	auto Zombie = Cast<AZombie>(OwnerComp.GetAIOwner()->GetPawn());
 	
 
 	if (nullptr == World) return;
@@ -52,7 +53,8 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, FPSPlayer); // Å¸°Ù ÀúÀå
 				
-				ZombieAI->OnSprint.Broadcast();
+				//ZombieAI->OnSprint.Broadcast();
+				Zombie->Run();
 				
 			/*	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 				DrawDebugPoint(World, FPSPlayer->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
@@ -65,7 +67,8 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AZombieAIController::TargetKey, nullptr);
 		
-		ZombieAI->OnStopSprint.Broadcast();
+		//ZombieAI->OnStopSprint.Broadcast();
+		Zombie->Walk();
 	}
 
 	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);

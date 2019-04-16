@@ -11,6 +11,8 @@
 #include "FPSPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "FPSGameMode.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values
 AZombie::AZombie()
@@ -66,10 +68,7 @@ void AZombie::BeginPlay()
 	Super::BeginPlay();
 	AudioComponent->SetSound(ZombieSound);
 	AudioComponent->Play();
-	//´Þ¸®±â
-	ZombieAI->OnSprint.AddUObject(this, &AZombie::Run);
-	//°È±â
-	ZombieAI->OnStopSprint.AddUObject(this, &AZombie::Walk);
+
 }
 
 // Called every frame
@@ -172,7 +171,7 @@ void AZombie::Attack()
 
 void AZombie::Run()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	IsRun = true;
 }
 

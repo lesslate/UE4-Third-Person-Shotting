@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "FPSGameMode.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(AggroDelegate)
 /**
  * 
  */
@@ -17,6 +18,7 @@ class FPSRPG_API AFPSGameMode : public AGameModeBase
 public:
 	AFPSGameMode();
 	
+	AggroDelegate OnAggro;
 	
 	
 };
