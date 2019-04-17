@@ -18,7 +18,7 @@ class FPSRPG_API AZombie : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AZombie();
-
+	
 	void Attack();
 	void Run();
 	void Walk();
@@ -35,7 +35,9 @@ public:
 
 	FOnAttackEndDelegate OnAttackEnd;
 	FSprintDelegate OnSprint;
-	
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> AmmoBlueprint;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -79,7 +81,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool IsDeath;
 
-
+	
 	
 	
 };

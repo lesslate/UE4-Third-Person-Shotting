@@ -13,6 +13,7 @@
 #include "Components/WidgetComponent.h"
 #include "FPSGameMode.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 AZombie::AZombie()
@@ -56,7 +57,12 @@ AZombie::AZombie()
 	AudioComponent->bAutoActivate = false;
 	AudioComponent->SetupAttachment(GetMesh());
 	
-
+	static ConstructorHelpers::FObjectFinder<UBlueprint> AmmoItem(TEXT("Blueprint'/Game/Weapon/Ammo.Ammo'"));
+	if (AmmoItem.Object)
+	{
+		AmmoBlueprint = (UClass*)AmmoItem.Object->GeneratedClass;
+	}
+		
 	IsAttacking = false;
 	IsDeath = false;
 	IsHead = false;
@@ -204,5 +210,22 @@ void AZombie::Death()
 	ZombieAnim->PlayDeathMontage();
 	AudioComponent->Stop();
 
+	int32 Random=FMath::RandRange(1, 10);
+	
+	if (Random == 1&&AmmoBlueprint)
+	{
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			UE_LOG(LogTemp, Log, TEXT("SpawnAmmo"));
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			FRotator rotator;
+			FVector  SpawnLocation = GetActorLocation();
+			SpawnLocation.Z -= 90.0f;
+			
+			world->SpawnActor<AActor>(AmmoBlueprint, SpawnLocation, rotator, SpawnParams);
+		}
+	}
 }
 

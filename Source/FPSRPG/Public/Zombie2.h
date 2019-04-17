@@ -37,6 +37,8 @@ public:
 	FOnAttackEndDelegate OnAttackEnd;
 	FSprintDelegate OnSprint;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> AmmoBlueprint;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
