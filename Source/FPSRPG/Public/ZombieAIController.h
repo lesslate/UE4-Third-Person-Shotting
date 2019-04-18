@@ -20,7 +20,7 @@ public:
 	AZombieAIController();
 	virtual void Possess(APawn* InPawn) override;
 	
-	void SetRadius();
+	
 	void StopAI();
 	FSprintDelegate OnSprint;
 	FSprintDelegate OnStopSprint;

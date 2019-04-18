@@ -41,40 +41,10 @@ void AZombieAIController2::Possess(APawn * InPawn)
 			UE_LOG(LogTemp, Log, TEXT("BT NOT FOUND"));
 		}
 	}
-	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (gameMode != nullptr)
-	{
-		gameMode->OnAggro.AddUObject(this, &AZombieAIController2::SetRadius);
-	}
+
 }
 
-void AZombieAIController2::SetRadius()
-{
-	FVector Center = GetPawn()->GetActorLocation();
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionQueryParams CollisionQueryParam;
-	bool bResult = GetWorld()->OverlapMultiByChannel(
-		OverlapResults,
-		Center,
-		FQuat::Identity,
-		ECollisionChannel::ECC_Visibility,
-		FCollisionShape::MakeSphere(3500.0f),
-		CollisionQueryParam
-	);
 
-	if (bResult)
-	{
-		for (auto OverlapResult : OverlapResults)
-		{
-			if (OverlapResult.GetActor()->ActorHasTag("Player")&& Radius != 3500.0f)
-			{
-				DrawDebugSphere(GetWorld(), Center, 3500.0f, 16, FColor::Green, false, 0.2f);
-				Radius = 3500.0f;
-			}
-
-		}
-	}
-}
 
 void AZombieAIController2::StopAI()
 {

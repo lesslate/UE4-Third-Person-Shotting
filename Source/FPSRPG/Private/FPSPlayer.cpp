@@ -22,6 +22,7 @@
 #include "Zombie2.h"
 #include "BTService_Detect.h"
 #include "ZombieAIController.h"
+#include "ZombieAIController2.h"
 #include "FPSGameMode.h"
 
 // Sets default values
@@ -353,11 +354,48 @@ void AFPSPlayer::Aggro()
 		{
 			if (OverlapResult.GetActor()->ActorHasTag("Monster"))
 			{
-				AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-				if (gameMode != nullptr)
+				if (OverlapResult.GetActor()->ActorHasTag("Zombie1"))
 				{
-					gameMode->OnAggro.Broadcast();
+					auto Zombie1 = Cast<AZombie>(OverlapResult.GetActor());
+					if (!IsValid(Zombie1))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Zombie1 not found"));
+						return;
+					}
+					auto ZombieAI = Cast<AZombieAIController>(Zombie1->GetController());
+					if (!IsValid(ZombieAI))
+					{
+						return;
+					}
+					if (nullptr != ZombieAI)
+					{
+						ZombieAI->Radius = 3500.0f;
+					}
 				}
+				if (OverlapResult.GetActor()->ActorHasTag("Zombie2"))
+				{
+					auto Zombie2 = Cast<AZombie2>(OverlapResult.GetActor());
+					if (!IsValid(Zombie2))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Zombie2 not found"));
+						return;
+					}
+					auto ZombieAI2 = Cast<AZombieAIController2>(Zombie2->GetController());
+					if (!IsValid(ZombieAI2))
+					{
+						return;
+					}
+					if (nullptr != ZombieAI2)
+					{
+						ZombieAI2->Radius = 4500.0f;
+					}
+				}
+			
+				//AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+				//if (gameMode != nullptr)
+				//{
+				//	gameMode->OnAggro.Broadcast();
+				//}
 			}
 		
 		}
