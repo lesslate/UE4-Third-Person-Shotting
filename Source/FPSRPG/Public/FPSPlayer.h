@@ -6,7 +6,13 @@
 #include "GameFramework/Character.h"
 #include "FPSPlayer.generated.h"
 
-
+UENUM(BlueprintType)
+enum class EWeaponState : uint8
+{
+	NoWeapon UMETA(DisplayName = "NoWeapon"),
+	FirstWeapon UMETA(DisplayName = "FirstWeapon"),
+	SecondWeapon UMETA(DisplayName = "SecondWeapon"),
+};
 
 UCLASS()
 class FPSRPG_API AFPSPlayer : public ACharacter
@@ -34,6 +40,18 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
 	class UStaticMeshComponent* WeaponMesh;
 
+	// 보조 무기 메시 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	class UStaticMeshComponent* SecondWeaponMesh;
+
+	// 등 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	class UStaticMeshComponent* WeaponBack;
+
+	// 등 보조무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Mesh)
+	class UStaticMeshComponent* SecondWeaponBack;
+
 	// 오디오 컴포넌트
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class UAudioComponent* AudioComponent;
@@ -57,6 +75,9 @@ public:
 protected:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	EWeaponState WeaponState;
+
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
@@ -73,6 +94,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CheckWeapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool CheckBow;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool Aiming;

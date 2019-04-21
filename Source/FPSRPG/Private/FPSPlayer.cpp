@@ -60,7 +60,14 @@ AFPSPlayer::AFPSPlayer()
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponHand"));
 	WeaponMesh->SetupAttachment(GetMesh(), TEXT("WeaponHand"));
 
+	SecondWeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponHand2"));
+	SecondWeaponMesh->SetupAttachment(GetMesh(), TEXT("WeaponHand2"));
 
+	WeaponBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBackRifle"));
+	WeaponBack->SetupAttachment(GetMesh(), TEXT("WeaponBackRifle"));
+
+	SecondWeaponBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBackBow"));
+	SecondWeaponBack->SetupAttachment(GetMesh(), TEXT("WeaponBackBow"));
 
 	// 애니메이션 블루프린트 속성지정
 	static ConstructorHelpers::FClassFinder<UAnimInstance> FPSPlayerAnim(TEXT("AnimBlueprint'/Game/Character/FPSPlayerAnimBP.FPSPlayerAnimBP_C'")); // _C를 붙여 클래스정보를 가져옴
@@ -73,6 +80,7 @@ AFPSPlayer::AFPSPlayer()
 	SprintSpeedMultiplier = 2.0f;
 
 	CheckWeapon = false;
+	CheckBow = false;
 	Aiming = false;
 	IsSprint = false;
 	Ammo = 0;
