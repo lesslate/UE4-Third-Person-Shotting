@@ -28,6 +28,9 @@ public:
 	UFUNCTION()
 	void ReceivePointDamage(float Damage, const UDamageType * DamageType, FVector HitLocation, FVector HitNormal, UPrimitiveComponent * HitComponent, FName BoneName, FVector ShotFromDirection, AController * InstigatedBy, AActor * DamageCauser, const FHitResult & HitInfo);
 
+	UFUNCTION()
+	void ReceiveRadialDamage(float DamageReceived, const UDamageType * DamageType, FVector Origin, const FHitResult & HitInfo, AController * InstigatedBy, AActor * DamageCauser);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsRun;
 

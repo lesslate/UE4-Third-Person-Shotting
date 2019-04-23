@@ -201,6 +201,16 @@ void AZombie::ReceivePointDamage(float Damage, const UDamageType * DamageType, F
 	}
 }
 
+void AZombie::ReceiveRadialDamage(float DamageReceived, const UDamageType * DamageType, FVector Origin, const FHitResult & HitInfo, AController * InstigatedBy, AActor * DamageCauser)
+{
+	HP -= DamageReceived;
+	if (HP <= 0)
+	{
+		IsDeath = true;
+		Death();
+	}
+}
+
 void AZombie::Death()
 {
 	ZombieAI->StopAI();

@@ -83,9 +83,16 @@ AFPSPlayer::AFPSPlayer()
 	CheckBow = false;
 	Aiming = false;
 	IsSprint = false;
+	BowState = false;
+
 	Ammo = 0;
-	Magazine = 30;
 	RemainAmmo = 0;
+
+	Bolt = 0;
+	RemainBolt = 50;
+
+	BoltMagazine = 5;
+	Magazine = 30;
 	PlayerHP = 100.0f;
 	PlayerMAXHP = 100.0f;
 	Damage = 5000.0f;
@@ -102,7 +109,17 @@ AFPSPlayer::AFPSPlayer()
 	{
 		MetalCue = MetalClick.Object;
 	}
-
+	static ConstructorHelpers::FObjectFinder<USoundCue>CrossBow(TEXT("SoundCue'/Game/WeaponEffects/Crossbow_Cue.Crossbow_Cue'"));
+	if (CrossBow.Succeeded())
+	{
+		CrossBowCue = CrossBow.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<USoundCue>ExplosionSound(TEXT("SoundCue'/Game/WeaponEffects/Explosion_Cue.Explosion_Cue'"));
+	if (ExplosionSound.Succeeded())
+	{
+		ExplosionCue = ExplosionSound.Object;
+	}
+	
 	// 오디오 컴포넌트 초기화
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PlayerAudio"));
 	AudioComponent->bAutoActivate = false;
@@ -125,6 +142,12 @@ AFPSPlayer::AFPSPlayer()
 	if (Smoke.Succeeded())
 	{
 		SmokeParticle = Smoke.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Explosion(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Explosion.P_Explosion'"));
+	if (Explosion.Succeeded())
+	{
+		ExplosionParticle = Explosion.Object;
 	}
 }
 
@@ -225,6 +248,57 @@ void AFPSPlayer::StopSprinting()
 		}
 }
 
+void AFPSPlayer::BowFire()
+{
+	
+	if (Aiming == true && Bolt == 0)
+	{
+		AudioComponent->SetSound(MetalCue);
+		AudioComponent->Play();
+	}
+
+	
+	if (Aiming == true && Bolt != 0 && isFiring == true)
+	{
+		Bolt--;
+		GameStatic->SpawnEmitterAttached(FireParticle, SecondWeaponMesh, FName("Muzzle"), FVector::ZeroVector,FRotator::ZeroRotator,FVector(10.0f,1.0f,1.0f)); // 총구화염
+		FHitResult OutHit;
+		FVector Start = FollowCamera->GetComponentLocation();
+		FVector ForwardVector = FollowCamera->GetForwardVector();
+		FVector End = (Start + (ForwardVector*10000.f));
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(this);
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, true);
+
+		bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
+
+		if (isHit)
+		{
+			if (OutHit.GetActor())
+			{
+				DrawDebugSolidBox(GetWorld(), OutHit.ImpactPoint, FVector(10.f), FColor::Blue, true);
+			
+				AActor* HitActor = OutHit.GetActor();
+				
+				ActualDamage = FMath::RandRange((Damage - (Damage / 100) * 20)*10, (Damage + (Damage / 100) * 20)*10);
+				GameStatic->SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, OutHit.ImpactPoint,FRotator::ZeroRotator,FVector(5.0f,5.0f,5.0f)); 
+				//GameStatic->ApplyPointDamage(HitActor, ActualDamage, HitActor->GetActorLocation(), OutHit, nullptr, this, nullptr); // 포인트 데미지
+				GameStatic->PlaySoundAtLocation(this, ExplosionCue, OutHit.ImpactPoint);
+				GameStatic->ApplyRadialDamage(GetWorld(), ActualDamage, OutHit.ImpactPoint, 1000.0f,nullptr,TArray<AActor*>(),this,false,ECC_Visibility);
+			}
+
+		}
+
+
+		AudioComponent->SetSound(CrossBowCue);
+		AudioComponent->Play();
+		FPSAnim->PlayFire();
+		//GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Fire, 1.0f, false);
+		UE_LOG(LogTemp, Log, TEXT("Bolt : %d"), Bolt);
+
+	}
+}
+
 void AFPSPlayer::Fire()
 {
 	// 총알이 없을때
@@ -301,13 +375,26 @@ void AFPSPlayer::StopFire()
 
 void AFPSPlayer::StartFire()
 {
-	isFiring = true;
-	Fire();
+	if (BowState)
+	{
+		isFiring = true;
+		BowFire();
+	}
+	else
+	{
+		isFiring = true;
+		Fire();
+	}
 }
 
 void AFPSPlayer::Reload()
 {
-	if (Aiming == false && CheckWeapon == true && IsReloading == false && Ammo != Magazine && RemainAmmo != 0)
+	if (BowState==true&&Aiming == false && CheckBow == true && IsReloading == false && Bolt != BoltMagazine && RemainBolt != 0)
+	{
+		FPSAnim->PlayReload();
+		IsReloading = true;
+	}
+	if (BowState==false&&Aiming == false && CheckWeapon == true && IsReloading == false && Ammo != Magazine && RemainAmmo != 0)
 	{
 		/*UE_LOG(LogTemp, Log, TEXT("Reload"));*/
 		FPSAnim->PlayReload();
@@ -325,16 +412,31 @@ void AFPSPlayer::Death()
 
 void AFPSPlayer::ReloadEnd()
 {
-	UE_LOG(LogTemp, Log, TEXT("ReloadComplete"));
-	if ((Magazine - Ammo) > RemainAmmo)
+	if (BowState)
 	{
-		Ammo = (RemainAmmo + Ammo);
-		RemainAmmo = 0;
+		if ((BoltMagazine - Bolt) > RemainBolt)
+		{
+			Bolt = (RemainBolt + Bolt);
+			RemainBolt = 0;
+		}
+		else
+		{
+			RemainBolt = RemainBolt - (BoltMagazine - Bolt);
+			Bolt = (BoltMagazine - Bolt) + Bolt;
+		}
 	}
-	else
-	{
-		RemainAmmo = RemainAmmo - (Magazine - Ammo);
-		Ammo = (Magazine - Ammo) + Ammo;
+
+	else {
+		if ((Magazine - Ammo) > RemainAmmo)
+		{
+			Ammo = (RemainAmmo + Ammo);
+			RemainAmmo = 0;
+		}
+		else
+		{
+			RemainAmmo = RemainAmmo - (Magazine - Ammo);
+			Ammo = (Magazine - Ammo) + Ammo;
+		}
 	}
 	//UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
 	IsReloading = false;

@@ -84,6 +84,7 @@ protected:
 	void Sprint();
 	void StopSprinting();
 
+	void BowFire();
 	void Fire();
 	void StopFire();
 	void StartFire();
@@ -107,6 +108,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool IsReloading;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool BowState;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
 	int32 Ammo;
 
@@ -114,7 +118,16 @@ protected:
 	int32 RemainAmmo;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 Bolt;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 RemainBolt;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
 	int32 Magazine;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
+	int32 BoltMagazine;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Stat)
 	float PlayerHP;
@@ -134,6 +147,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Audio")
 	class USoundCue* MetalCue;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Audio")
+	class USoundCue* CrossBowCue;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Audio")
+	class USoundCue* ExplosionCue;
 	// 달리기 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character Movement: Walking")
 	float SprintSpeedMultiplier;
@@ -150,6 +168,8 @@ protected:
 	UPROPERTY()
 	class UParticleSystem * SmokeParticle;
 
+	UPROPERTY()
+	class UParticleSystem * ExplosionParticle;
 
 private:
 	UPROPERTY()
