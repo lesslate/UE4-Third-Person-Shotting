@@ -84,6 +84,7 @@ AFPSPlayer::AFPSPlayer()
 	Aiming = false;
 	IsSprint = false;
 	BowState = false;
+	FireDelay = false;
 
 	Ammo = 0;
 	RemainAmmo = 0;
@@ -258,7 +259,7 @@ void AFPSPlayer::BowFire()
 	}
 
 	
-	if (Aiming == true && Bolt != 0 && isFiring == true)
+	if (FireDelay==false&&Aiming == true && Bolt != 0 && isFiring == true)
 	{
 		Bolt--;
 		GameStatic->SpawnEmitterAttached(FireParticle, SecondWeaponMesh, FName("Muzzle"), FVector::ZeroVector,FRotator::ZeroRotator,FVector(10.0f,1.0f,1.0f)); // ÃÑ±¸È­¿°
@@ -294,6 +295,11 @@ void AFPSPlayer::BowFire()
 		AudioComponent->Play();
 		FPSAnim->PlayFire();
 		//GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Fire, 1.0f, false);
+		FireDelay = true;
+
+		GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Delay, 1.0f, false); // 1ÃÊÀÇ ¹ß»çµô·¹ÀÌ
+		
+		
 		UE_LOG(LogTemp, Log, TEXT("Bolt : %d"), Bolt);
 
 	}
@@ -362,7 +368,7 @@ void AFPSPlayer::Fire()
 		AudioComponent->SetSound(ShotCue);
 		AudioComponent->Play();
 		FPSAnim->PlayFire();
-		GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Fire, .1f, false);
+		GetWorld()->GetTimerManager().SetTimer(timer, this, &AFPSPlayer::Fire, .1f, false); 
 		UE_LOG(LogTemp, Log, TEXT("Ammo : %d"), Ammo);
 
 	}
@@ -408,6 +414,11 @@ void AFPSPlayer::Death()
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AFPSPlayer::Delay()
+{
+	FireDelay = false;
 }
 
 void AFPSPlayer::ReloadEnd()

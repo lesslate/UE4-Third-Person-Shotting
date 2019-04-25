@@ -181,6 +181,10 @@ private:
 	UPROPERTY()
 	FTimerHandle timer;
 
+	UPROPERTY()
+	bool FireDelay;
+
+	void Delay();
 	bool isFiring;
 	
 };
