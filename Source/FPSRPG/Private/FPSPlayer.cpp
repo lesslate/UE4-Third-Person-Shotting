@@ -191,6 +191,7 @@ void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AFPSPlayer::StopFire);
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AFPSPlayer::Reload);
+	PlayerInputComponent->BindAction("Bomb", IE_Pressed, this, &AFPSPlayer::Bomb);
 }
 
 float AFPSPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
@@ -414,6 +415,19 @@ void AFPSPlayer::Death()
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AFPSPlayer::Bomb()
+{
+	if (OverlapRadio)
+	{
+		AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (gameMode != nullptr)
+		{
+			gameMode->StartBombing.Broadcast();
+			UE_LOG(LogTemp, Log, TEXT("StartBomb"));
+		}
+	}
 }
 
 void AFPSPlayer::Delay()

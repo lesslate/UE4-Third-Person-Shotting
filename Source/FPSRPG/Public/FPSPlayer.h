@@ -69,6 +69,7 @@ public:
 
 	void ReloadEnd();
 	void Aggro();
+	
 
 	
 
@@ -91,7 +92,10 @@ protected:
 	
 	void Reload();
 	void Death();
+	void Bomb();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool OverlapRadio;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool CheckWeapon;

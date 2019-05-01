@@ -12,6 +12,8 @@ AFPSGameMode::AFPSGameMode()
 		DefaultPawnClass = BPFPSPlayer.Object;
 	}
 
+
+
 }
 
 
