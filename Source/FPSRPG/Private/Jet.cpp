@@ -20,7 +20,7 @@ void AJet::BeginPlay()
 	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != nullptr)
 	{
-		gameMode->StartBombing.AddDynamic(this, &AJet::StartFly);
+		gameMode->StartBombing.AddUObject(this, &AJet::StartFly);
 	}
 
 }

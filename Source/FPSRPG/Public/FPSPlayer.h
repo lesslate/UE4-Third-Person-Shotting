@@ -92,7 +92,9 @@ protected:
 	
 	void Reload();
 	void Death();
-	void Bomb();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void Interaction();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool OverlapRadio;

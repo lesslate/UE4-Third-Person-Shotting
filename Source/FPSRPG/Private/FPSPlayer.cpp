@@ -191,7 +191,7 @@ void AFPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AFPSPlayer::StopFire);
 
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AFPSPlayer::Reload);
-	PlayerInputComponent->BindAction("Bomb", IE_Pressed, this, &AFPSPlayer::Bomb);
+	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &AFPSPlayer::Interaction);
 }
 
 float AFPSPlayer::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
@@ -417,7 +417,7 @@ void AFPSPlayer::Death()
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void AFPSPlayer::Bomb()
+void AFPSPlayer::Interaction_Implementation()
 {
 	if (OverlapRadio)
 	{

@@ -20,7 +20,7 @@ void ABomb::BeginPlay()
 	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (gameMode != nullptr)
 	{
-		gameMode->StartBombing.AddDynamic(this, &ABomb::Bomb);
+		gameMode->StartBombing.AddUObject(this, &ABomb::Bomb);
 	}
 }
 

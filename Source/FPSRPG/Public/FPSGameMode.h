@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "FPSGameMode.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStartBomb);
+DECLARE_MULTICAST_DELEGATE(FStartBomb);
 
 
 /**
@@ -20,7 +20,6 @@ class FPSRPG_API AFPSGameMode : public AGameModeBase
 public:
 	AFPSGameMode();
 	
-	UPROPERTY(BlueprintAssignable, Category = "Bomb")
 	FStartBomb StartBombing;
 
 
