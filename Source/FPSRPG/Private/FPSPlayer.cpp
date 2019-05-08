@@ -24,6 +24,8 @@
 #include "ZombieAIController.h"
 #include "ZombieAIController2.h"
 #include "FPSGameMode.h"
+#include "BossZombie.h"
+#include "BossZombieAIController.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -526,6 +528,24 @@ void AFPSPlayer::Aggro()
 					if (nullptr != ZombieAI2)
 					{
 						ZombieAI2->Radius = 4500.0f;
+					}
+				}
+				if (OverlapResult.GetActor()->ActorHasTag("Zombie3"))
+				{
+					auto Zombie3 = Cast<ABossZombie>(OverlapResult.GetActor());
+					if (!IsValid(Zombie3))
+					{
+						UE_LOG(LogTemp, Log, TEXT("Zombie3 not found"));
+						return;
+					}
+					auto ZombieAI3 = Cast<ABossZombieAIController>(Zombie3->GetController());
+					if (!IsValid(ZombieAI3))
+					{
+						return;
+					}
+					if (nullptr != ZombieAI3)
+					{
+						ZombieAI3->Radius = 5500.0f;
 					}
 				}
 			

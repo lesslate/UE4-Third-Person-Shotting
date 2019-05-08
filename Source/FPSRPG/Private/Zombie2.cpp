@@ -47,7 +47,7 @@ AZombie2::AZombie2()
 	}
 
 	// 사운드 큐 저장
-	static ConstructorHelpers::FObjectFinder<USoundCue>ZOMBIE_SOUND(TEXT("SoundCue'/Game/zombie/189281__huminaatio__zombie-breathing_Cue.189281__huminaatio__zombie-breathing_Cue'"));
+	static ConstructorHelpers::FObjectFinder<USoundCue>ZOMBIE_SOUND(TEXT("SoundCue'/Game/Sound/ZombieBreatheCue.ZombieBreatheCue'"));
 	if (ZOMBIE_SOUND.Succeeded())
 	{
 		ZombieSound = ZOMBIE_SOUND.Object;

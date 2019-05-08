@@ -14,7 +14,7 @@ class FPSRPG_API UBTTask_Attack2 : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-	public:
+public:
 	UBTTask_Attack2();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

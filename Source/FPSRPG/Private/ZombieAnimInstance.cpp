@@ -6,13 +6,13 @@
 
 UZombieAnimInstance::UZombieAnimInstance()
 {
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("AnimMontage'/Game/zombie/Zombie_Attack_mixamo_com_Montage.Zombie_Attack_mixamo_com_Montage'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("AnimMontage'/Game/Character/Zombie/Zombie_Attack_mixamo_com_Montage.Zombie_Attack_mixamo_com_Montage'"));
 	if (ATTACK_MONTAGE.Succeeded())
 	{
 		AttackMontage = ATTACK_MONTAGE.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT("AnimMontage'/Game/zombie/Zombie_Dying_mixamo_com_Montage.Zombie_Dying_mixamo_com_Montage'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DEATH_MONTAGE(TEXT("AnimMontage'/Game/Character/Zombie/Zombie_Dying_mixamo_com_Montage.Zombie_Dying_mixamo_com_Montage'"));
 	if (DEATH_MONTAGE.Succeeded())
 	{
 		DeathMontage = DEATH_MONTAGE.Object;

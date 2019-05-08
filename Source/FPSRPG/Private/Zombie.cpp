@@ -33,7 +33,7 @@ AZombie::AZombie()
 	GetCharacterMovement()->MaxWalkSpeed = 150.0f;
 
 	// 스켈레탈 메시 설정
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/zombie/jill.jill'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> ZBMESH(TEXT("SkeletalMesh'/Game/Character/Zombie/jill.jill'"));
 	if (ZBMESH.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(ZBMESH.Object);
@@ -47,7 +47,7 @@ AZombie::AZombie()
 	}
 
 	// 사운드 큐 저장
-	static ConstructorHelpers::FObjectFinder<USoundCue>ZOMBIE_SOUND(TEXT("SoundCue'/Game/zombie/189281__huminaatio__zombie-breathing_Cue.189281__huminaatio__zombie-breathing_Cue'"));
+	static ConstructorHelpers::FObjectFinder<USoundCue>ZOMBIE_SOUND(TEXT("SoundCue'/Game/Sound/ZombieBreatheCue.ZombieBreatheCue'"));
 	if (ZOMBIE_SOUND.Succeeded())
 	{
 		ZombieSound = ZOMBIE_SOUND.Object;
