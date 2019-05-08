@@ -6,7 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "FPSGameMode.generated.h"
 
+
 DECLARE_MULTICAST_DELEGATE(FStartBomb);
+DECLARE_MULTICAST_DELEGATE(FVictory);
 
 
 /**
@@ -21,8 +23,14 @@ public:
 	AFPSGameMode();
 	
 	FStartBomb StartBombing;
-
-
-
+	FVictory Victory;
+	UFUNCTION()
+	void DecreaseMonster();
 	
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	int32 RemainZombie;
+
+
 };

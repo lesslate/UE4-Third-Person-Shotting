@@ -12,6 +12,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Math/UnrealMathUtility.h"
+#include "FPSGameMode.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values
 AZombie2::AZombie2()
@@ -240,5 +242,7 @@ void AZombie2::Death()
 			world->SpawnActor<AActor>(AmmoBlueprint, SpawnLocation, rotator, SpawnParams);
 		}
 	}
+	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	gameMode->DecreaseMonster();
 }
 

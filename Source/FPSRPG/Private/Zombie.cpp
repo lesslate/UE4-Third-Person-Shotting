@@ -237,5 +237,8 @@ void AZombie::Death()
 			world->SpawnActor<AActor>(AmmoBlueprint, SpawnLocation, rotator, SpawnParams);
 		}
 	}
+	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	gameMode->DecreaseMonster();
+	
 }
 

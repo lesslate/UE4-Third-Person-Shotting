@@ -156,7 +156,10 @@ AFPSPlayer::AFPSPlayer()
 void AFPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (gameMode != nullptr)
+	{
+		gameMode->Victory.AddUObject(this, &AFPSPlayer::VictoryUI);
+	}
 }
 
 // Called every frame
@@ -170,6 +173,7 @@ void AFPSPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	FPSAnim = Cast<UFPSAnimInstance>(GetMesh()->GetAnimInstance());
+	gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
 // Called to bind functionality to input
@@ -421,7 +425,6 @@ void AFPSPlayer::Interaction_Implementation()
 {
 	if (OverlapRadio)
 	{
-		AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 		if (gameMode != nullptr)
 		{
 			gameMode->StartBombing.Broadcast();
@@ -537,6 +540,8 @@ void AFPSPlayer::Aggro()
 	}
 		DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 16, FColor::Red, false, 0.2f);
 }
+
+
 
 bool AFPSPlayer::GetWeaponState()
 {

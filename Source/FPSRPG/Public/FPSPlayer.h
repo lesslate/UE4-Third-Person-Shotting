@@ -70,7 +70,8 @@ public:
 	void ReloadEnd();
 	void Aggro();
 	
-
+	UFUNCTION(BlueprintImplementableEvent, Category = "Victory")
+	void VictoryUI();
 	
 
 protected:
@@ -78,6 +79,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	EWeaponState WeaponState;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class AFPSGameMode* gameMode;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
