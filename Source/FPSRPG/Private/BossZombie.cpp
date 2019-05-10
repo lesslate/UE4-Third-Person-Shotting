@@ -22,7 +22,7 @@ ABossZombie::ABossZombie()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	HP = 500000.0f;
+	HP = 3000000.0f;
 
 	AIControllerClass = ABossZombieAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -215,11 +215,8 @@ void ABossZombie::Death()
 	ZombieAnim->PlayDeathMontage();
 	AudioComponent->Stop();
 
-	int32 Random = FMath::RandRange(1, 10);
-
-
 	AFPSGameMode* gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	gameMode->DecreaseMonster();
+	gameMode->Victory.Broadcast();
 
 }
 

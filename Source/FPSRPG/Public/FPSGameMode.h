@@ -9,7 +9,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FStartBomb);
 DECLARE_MULTICAST_DELEGATE(FVictory);
-
+DECLARE_MULTICAST_DELEGATE(FSpawn);
 
 /**
  * 
@@ -24,9 +24,12 @@ public:
 	
 	FStartBomb StartBombing;
 	FVictory Victory;
+	FSpawn Spawnning;
+
 	UFUNCTION()
 	void DecreaseMonster();
-	
+protected:
+	virtual void BeginPlay() override;
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

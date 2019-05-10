@@ -100,6 +100,9 @@ protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void Interaction();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void CameraShake();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool OverlapRadio;
 

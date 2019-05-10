@@ -26,6 +26,7 @@
 #include "FPSGameMode.h"
 #include "BossZombie.h"
 #include "BossZombieAIController.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 
 // Sets default values
 AFPSPlayer::AFPSPlayer()
@@ -161,6 +162,7 @@ void AFPSPlayer::BeginPlay()
 	if (gameMode != nullptr)
 	{
 		gameMode->Victory.AddUObject(this, &AFPSPlayer::VictoryUI);
+		gameMode->Spawnning.AddUObject(this, &AFPSPlayer::CameraShake);
 	}
 }
 
@@ -176,6 +178,8 @@ void AFPSPlayer::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	FPSAnim = Cast<UFPSAnimInstance>(GetMesh()->GetAnimInstance());
 	gameMode = Cast<AFPSGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+
 }
 
 // Called to bind functionality to input
