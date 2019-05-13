@@ -17,7 +17,7 @@ class FPSRPG_API UBasicWidget : public UUserWidget
 
 public:
 	
-	UFUNCTION(BlueprintImplementableEvent, Category = "Bomb")
+	UFUNCTION(BlueprintImplementableEvent, Category = "Text")
 	void TextChange();
 	
 	virtual void NativeConstruct();

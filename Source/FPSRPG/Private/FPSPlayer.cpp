@@ -93,7 +93,7 @@ AFPSPlayer::AFPSPlayer()
 	RemainAmmo = 0;
 
 	Bolt = 0;
-	RemainBolt = 50;
+	RemainBolt = 0;
 
 	BoltMagazine = 5;
 	Magazine = 30;
@@ -425,6 +425,7 @@ void AFPSPlayer::Death()
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	FailUI();
 }
 
 void AFPSPlayer::Interaction_Implementation()
@@ -576,3 +577,4 @@ bool AFPSPlayer::GetAimingState()
 {
 	return Aiming;
 }
+

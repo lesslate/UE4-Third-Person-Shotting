@@ -13,10 +13,10 @@ AZombieSpawner::AZombieSpawner()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> BossZombie(TEXT("Blueprint'/Game/Character/BP_BossZombie.BP_BossZombie'"));
-	if (BossZombie.Object)
+	static ConstructorHelpers::FClassFinder<AActor> BossZombie(TEXT("Blueprint'/Game/Character/BP_BossZombie.BP_BossZombie_C'"));
+	if (BossZombie.Class)
 	{
-		BossActor = (UClass*)BossZombie.Object->GeneratedClass;
+		BossActor = (UClass*)BossZombie.Class;
 	}
 }
 

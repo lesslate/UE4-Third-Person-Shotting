@@ -113,7 +113,7 @@ void ABossZombie::AttackCheck()
 		GetActorLocation() + GetActorForwardVector() * 50.0f,
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel5,
-		FCollisionShape::MakeSphere(50.0f),
+		FCollisionShape::MakeSphere(100.0f),
 		Params);
 
 
@@ -128,7 +128,7 @@ void ABossZombie::AttackCheck()
 	DrawDebugCapsule(GetWorld(),
 		Center,
 		HalfHeight,
-		50,
+		100,
 		CapsuleRot,
 		DrawColor,
 		false,

@@ -3,6 +3,7 @@
 #include "Bomb.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "FPSGameMode.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 // Sets default values
 ABomb::ABomb()

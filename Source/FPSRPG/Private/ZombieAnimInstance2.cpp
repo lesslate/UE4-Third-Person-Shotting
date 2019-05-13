@@ -21,7 +21,7 @@ UZombieAnimInstance2::UZombieAnimInstance2()
 
 void UZombieAnimInstance2::PlayAttackMontage()
 {
-	Montage_Play(AttackMontage, 2.0f);
+	Montage_Play(AttackMontage, 1.0f);
 }
 
 void UZombieAnimInstance2::PlayDeathMontage()

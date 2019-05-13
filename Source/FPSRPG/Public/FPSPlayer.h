@@ -73,7 +73,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Victory")
 	void VictoryUI();
 	
-
+	UFUNCTION(BlueprintImplementableEvent, Category = "Fail")
+	void FailUI();
 protected:
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 

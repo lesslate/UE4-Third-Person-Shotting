@@ -57,10 +57,10 @@ AZombie2::AZombie2()
 	AudioComponent->bAutoActivate = false;
 	AudioComponent->SetupAttachment(GetMesh());
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> AmmoItem(TEXT("Blueprint'/Game/Weapon/Ammo.Ammo'"));
-	if (AmmoItem.Object)
+	static ConstructorHelpers::FClassFinder<AActor> AmmoItem(TEXT("Blueprint'/Game/Item/Ammo.Ammo_C'"));
+	if (AmmoItem.Class)
 	{
-		AmmoBlueprint = (UClass*)AmmoItem.Object->GeneratedClass;
+		AmmoBlueprint = (UClass*)AmmoItem.Class;
 	}
 
 	IsAttacking = false;
@@ -235,7 +235,7 @@ void AZombie2::Death()
 			UE_LOG(LogTemp, Log, TEXT("SpawnAmmo"));
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
-			FRotator rotator;
+			FRotator rotator(0, 0, 0);
 			FVector  SpawnLocation = GetActorLocation();
 			SpawnLocation.Z -= 90.0f;
 
