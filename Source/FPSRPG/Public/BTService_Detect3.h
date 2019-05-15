@@ -17,12 +17,12 @@ public:
 	UBTService_Detect3();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float DetectRadius;
+		float DetectRadius;
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	
-	
-	
+
+
+
 };

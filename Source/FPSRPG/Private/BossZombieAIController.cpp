@@ -12,6 +12,7 @@
 const FName ABossZombieAIController::HomePosKey(TEXT("HomePos"));
 const FName ABossZombieAIController::PatrolPosKey(TEXT("PatrolPos"));
 const FName ABossZombieAIController::TargetKey(TEXT("Target"));
+const FName ABossZombieAIController::TaskNumberKey(TEXT("TaskNumber"));
 
 ABossZombieAIController::ABossZombieAIController()
 {

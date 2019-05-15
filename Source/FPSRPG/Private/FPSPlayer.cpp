@@ -99,7 +99,7 @@ AFPSPlayer::AFPSPlayer()
 	Magazine = 30;
 	PlayerHP = 100.0f;
 	PlayerMAXHP = 100.0f;
-	Damage = 5000.0f;
+	Damage = 7000.0f;
 	
 
 	// 사운드 큐 저장

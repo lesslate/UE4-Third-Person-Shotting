@@ -19,7 +19,11 @@ class FPSRPG_API UBossZombieAnimInstance : public UAnimInstance
 public:
 	UBossZombieAnimInstance();
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	FOnAttackHitCheckDelegate OnAttackHitCheck2;
+	FOnAttackHitCheckDelegate OnAttackHitCheck3;
 	void PlayAttackMontage();
+	void PlayAttackMontage2();
+	void PlayAttackMontage3();
 	void PlayDeathMontage();
 
 private:
@@ -27,10 +31,21 @@ private:
 	UAnimMontage* AttackMontage;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* AttackMontage2;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* AttackMontage3;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* DeathMontage;
 
 	UFUNCTION()
 	void AnimNotify_AttackHitCheck();
 	
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck2();
+
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck3();
 	
 };

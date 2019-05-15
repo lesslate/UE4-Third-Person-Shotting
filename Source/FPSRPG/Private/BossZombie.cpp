@@ -98,6 +98,8 @@ void ABossZombie::PostInitializeComponents()
 
 	//공격 판정 체크
 	ZombieAnim->OnAttackHitCheck.AddUObject(this, &ABossZombie::AttackCheck);
+	ZombieAnim->OnAttackHitCheck2.AddUObject(this, &ABossZombie::AttackCheck2);
+	ZombieAnim->OnAttackHitCheck3.AddUObject(this, &ABossZombie::AttackCheck3);
 }
 
 void ABossZombie::AttackCheck()
@@ -150,6 +152,109 @@ void ABossZombie::AttackCheck()
 
 }
 
+void ABossZombie::AttackCheck2()
+{
+	//TArray<FHitResult> HitResult;
+	FHitResult HitResult;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 180.0f,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel5,
+		FCollisionShape::MakeSphere(180.0f),
+		Params);
+
+
+	FVector TraceVec = GetActorForwardVector() * 50;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = 100 * 0.5f + 100;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+#if ENABLE_DRAW_DEBUG
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		100,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+
+#endif
+
+	if (bResult)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Zombie Hit: %s"), *HitResult.GetActor()->GetName());
+		if (HitResult.GetActor()->ActorHasTag("Player"))
+		{
+			FDamageEvent DamageEvent;
+			// 데미지전달
+			HitResult.Actor->TakeDamage(50, DamageEvent, GetController(), this);
+
+		}
+	}
+
+}
+
+void ABossZombie::AttackCheck3()
+{
+	Attack3_Particle(); // 파티클 토글
+
+	//TArray<FHitResult> HitResult;
+	FHitResult HitResult;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 280.0f,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel5,
+		FCollisionShape::MakeSphere(280.0f),
+		Params);
+
+
+	FVector TraceVec = GetActorForwardVector() * 280.0f;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = 100 * 0.5f + 280.0f;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+#if ENABLE_DRAW_DEBUG
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		100,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+
+#endif
+
+	if (bResult)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Zombie Hit: %s"), *HitResult.GetActor()->GetName());
+		if (HitResult.GetActor()->ActorHasTag("Player"))
+		{
+			FDamageEvent DamageEvent;
+			// 데미지전달
+			HitResult.Actor->TakeDamage(80, DamageEvent, GetController(), this);
+
+		}
+	}
+
+}
+
+
 void ABossZombie::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
 {
 	if (IsAttacking)
@@ -166,6 +271,25 @@ void ABossZombie::Attack()
 	{
 		//UE_LOG(LogTemp, Log, TEXT("zombie attack!"));
 		ZombieAnim->PlayAttackMontage();
+		IsAttacking = true;
+	}
+}
+
+void ABossZombie::Attack2()
+{
+	if (!IsAttacking)
+	{
+		ZombieAnim->PlayAttackMontage2();
+		IsAttacking = true;
+	}
+}
+
+
+void ABossZombie::Attack3()
+{
+	if (!IsAttacking)
+	{
+		ZombieAnim->PlayAttackMontage3();
 		IsAttacking = true;
 	}
 }

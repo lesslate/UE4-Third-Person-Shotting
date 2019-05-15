@@ -20,6 +20,8 @@ public:
 	ABossZombie();
 
 	void Attack();
+	void Attack2();
+	void Attack3();
 	void Run();
 	void Walk();
 	void Death();
@@ -29,6 +31,9 @@ public:
 
 	UFUNCTION()
 	void ReceiveRadialDamage(float DamageReceived, const class UDamageType * DamageType, FVector Origin, const struct FHitResult & HitInfo, class AController * InstigatedBy, AActor * DamageCauser);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "particle")
+	void Attack3_Particle();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsRun;
@@ -65,7 +70,8 @@ public:
 
 private:
 	void AttackCheck();
-
+	void AttackCheck2();
+	void AttackCheck3();
 
 	UPROPERTY()
 	class AActor* BPZombie;
