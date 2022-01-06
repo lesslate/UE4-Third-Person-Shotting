@@ -1,13 +1,3 @@
-```yaml
-title: "언리얼4 3인칭 좀비 슈팅게임 포트폴리오"
-categories:   - Portfolio
-last_modified_at: 2019-08-22T13:00:00+09:00
-toc: true
-sidebar_main: true
-```
-
----
-
 # 프로젝트 소개
 
 ---
@@ -28,15 +18,11 @@ Window 64bit
 
 3인칭 슈터
 
-
-
 ---
 
 # 개발 과정
 
 ## 플레이어 캐릭터 구성
-
-
 
 ### Line Trace를 이용한 공격
 
@@ -57,13 +43,9 @@ bool isHit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibi
 
 카메라부터 카메라 전방 100미터까지 추적하여 부딪히는 액터 반환
 
-
-
 > 실행 결과
 
 ![Player](https://github.com/lesslate/lesslate.github.io/blob/master/assets/img/Unreal/LinetraceDamage/GIF.gif?raw=true)
-
-
 
 ### 데미지 처리
 
@@ -83,32 +65,28 @@ if (isHit)
 
 ![1](https://github.com/lesslate/lesslate.github.io/blob/master/assets/img/Unreal/Aggro/GIF.gif?raw=true)
 
-
-
 ### 리로드
 
 ![2](https://github.com/lesslate/lesslate.github.io/blob/master/assets/img/cppReload/2.png?raw=true)
 
 재장전 애니메이션 노티파이 추가
 
-
-
 ```cpp
 void AFPSPlayer::ReloadEnd()
 {
-	UE_LOG(LogTemp, Log, TEXT("ReloadComplete"));
-	if ((Magazine - Ammo) > RemainAmmo)
-	{
-		Ammo = (RemainAmmo + Ammo);
-		RemainAmmo = 0;
-	}
-	else
-	{
-		RemainAmmo = RemainAmmo - (Magazine - Ammo);
-		Ammo = (Magazine - Ammo) + Ammo;
-	}
-	UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
-	IsReloading = false;
+    UE_LOG(LogTemp, Log, TEXT("ReloadComplete"));
+    if ((Magazine - Ammo) > RemainAmmo)
+    {
+        Ammo = (RemainAmmo + Ammo);
+        RemainAmmo = 0;
+    }
+    else
+    {
+        RemainAmmo = RemainAmmo - (Magazine - Ammo);
+        Ammo = (Magazine - Ammo) + Ammo;
+    }
+    UE_LOG(LogTemp, Log, TEXT("Current Ammo %d / %d"), Ammo, RemainAmmo);
+    IsReloading = false;
 }
 ```
 
@@ -118,11 +96,7 @@ void AFPSPlayer::ReloadEnd()
 
 ![3](https://github.com/lesslate/lesslate.github.io/blob/master/assets/img/cppReload/3.png?raw=true)
 
-
-
 ## 적 캐릭터 구성
-
-
 
 ### 일반 좀비
 
@@ -135,8 +109,6 @@ void AFPSPlayer::ReloadEnd()
 ![1](https://github.com/lesslate/lesslate.github.io/blob/master/assets/img/Unreal/BossAI/3.png?raw=true)
 
 더많은 패턴을 사용하는 보스캐릭터 비헤이비어트리 구성
-
-
 
 > 실행 결과
 
@@ -185,8 +157,6 @@ void AFPSPlayer::ReloadEnd()
 [게임 진행 UI](https://lesslate.github.io/unreal4/%EC%96%B8%EB%A6%AC%EC%96%BC4-C++-%EA%B2%8C%EC%9E%84-%EC%A7%84%ED%96%89-UI-%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0/)
 
 [보스 좀비 행동패턴 추가](https://lesslate.github.io/unreal4/%EC%96%B8%EB%A6%AC%EC%96%BC4-C++-%EB%AA%AC%EC%8A%A4%ED%84%B0-%ED%96%89%EB%8F%99-%ED%8C%A8%ED%84%B4-%EC%B6%94%EA%B0%80%ED%95%98%EA%B8%B0/)
-
-
 
 > 데모 다운로드 링크
 
